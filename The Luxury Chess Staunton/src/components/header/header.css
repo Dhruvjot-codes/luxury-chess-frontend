@@ -1,0 +1,247 @@
+/* ===== Header base ===== */
+header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  width: 100%;
+  box-sizing: border-box;
+  background: var(--header-bg);
+  border-bottom: 1px solid var(--header-border);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  color: var(--header-text);
+  backdrop-filter: blur(18px);
+  transition: background 0.5s ease, color 0.5s ease, border-color 0.5s ease;
+}
+
+.header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 40px;
+  max-width: 1400px;
+  margin: 0 auto;
+  box-sizing: border-box;
+  gap: 20px;
+}
+
+/* ===== Branding ===== */
+.logo {
+  font-size: 1.6rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--header-text);
+  white-space: nowrap;
+}
+
+/* ===== Desktop navigation ===== */
+.link {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.link a {
+  position: relative;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--header-link);
+  text-decoration: none;
+  padding-bottom: 4px;
+  transition: color 0.2s ease;
+}
+
+.link a::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 0;
+  height: 2px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #38bdf8, #22c55e);
+  transition: width 0.22s ease-out;
+}
+
+.link a:hover {
+  color: var(--header-link-hover);
+}
+
+.link a:hover::after {
+  width: 100%;
+}
+
+/* ===== Burger button (mobile) ===== */
+.menu-toggle {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  border: 1px solid rgba(148, 163, 184, 0.7);
+  background: rgba(15, 23, 42, 0.9);
+  cursor: pointer;
+  padding: 0;
+  outline: none;
+  transition:
+    border-color 0.2s ease,
+    background 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.12s ease;
+}
+
+.menu-toggle span {
+  display: block;
+  width: 18px;
+  height: 2px;
+  border-radius: 999px;
+  background: #e5e7eb;
+  transition:
+    transform 0.2s ease,
+    opacity 0.2s ease,
+    width 0.2s ease;
+}
+
+.menu-toggle--open span:nth-child(1) {
+  transform: translateY(6px) rotate(45deg);
+}
+
+.menu-toggle--open span:nth-child(2) {
+  opacity: 0;
+  width: 0;
+}
+
+.menu-toggle--open span:nth-child(3) {
+  transform: translateY(-6px) rotate(-45deg);
+}
+
+.menu-toggle:hover {
+  border-color: rgba(248, 250, 252, 0.9);
+  box-shadow: 0 12px 32px rgba(15, 23, 42, 0.9);
+  transform: translateY(-1px);
+}
+
+/* ===== Responsiveness ===== */
+@media (max-width: 900px) {
+  .header-inner {
+    padding: 10px 16px;
+  }
+
+  .logo {
+    font-size: 1rem;
+  }
+
+  .menu-toggle {
+    display: flex;
+  }
+
+  /* Turn nav into dropdown panel */
+  .link {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 60px;
+    margin: 0 auto;
+    max-width: 1200px;
+    padding: 10px 16px 14px;
+    background: linear-gradient(160deg, #020617 0%, #020617 40%, #020617 100%);
+    border-bottom: 1px solid rgba(148, 163, 184, 0.35);
+    display: none;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .link--open {
+    display: flex;
+  }
+
+  .link a,
+  .link button {
+    width: 100%;
+    padding: 12px 16px;
+    border-radius: 8px;
+    transition: background-color 0.2s ease;
+    margin-bottom: 5px;
+  }
+
+  .link a:hover,
+  .link button:hover {
+    background: rgba(56, 189, 248, 0.1);
+  }
+}
+
+@media (max-width: 600px) {
+  .header-inner {
+    padding: 10px 14px;
+  }
+
+  .logo {
+    max-width: 100%;
+    white-space: normal;
+    line-height: 1.3;
+  }
+
+  .link {
+    font-size: 0.85rem;
+    top: 56px;
+  }
+
+  .user-info {
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .logout-btn {
+    width: 100%;
+    padding: 10px 12px;
+  }
+}
+
+/* ===== User info and auth ===== */
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: rgba(56, 189, 248, 0.1);
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.username {
+  font-size: 0.95rem;
+  color: #38bdf8;
+  font-weight: 500;
+}
+
+.admin-badge {
+  font-size: 0.75rem;
+  background: linear-gradient(90deg, #f59e0b, #dc2626);
+  color: white;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-weight: 600;
+}
+
+.logout-btn {
+  background: linear-gradient(90deg, #ef4444, #dc2626);
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.logout-btn:hover {
+  background: linear-gradient(90deg, #dc2626, #b91c1c);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+}

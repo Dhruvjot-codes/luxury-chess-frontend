@@ -1,0 +1,111 @@
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import "./auth.css";
+import { authService } from "../../services/api";
+
+// Registration flow:
+// 1) POST /api/users/register/otp to request OTP & activation token
+// 2) Redirect to Verify page with token in query params
+// 3) User enters OTP and completes verification
+// 4) Redirect to login page
+const Register = () => {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+  const navigate = useNavigate();
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError("");
+    setSuccess("");
+    setLoading(true);
+
+    try {
+      if (!name || !email || !password) {
+        throw new Error("All fields are required");
+      }
+
+      const data = await authService.register(name, email, password);
+
+      if (data.success) {
+        setSuccess("Registration successful! Please check your email for OTP verification.");
+        // Redirect to verify page with token
+        navigate(`/verify?token=${data.token}`);
+      } else {
+        throw new Error(data.message || "Registration failed");
+      }
+    } catch (err) {
+      setError("Registration failed. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="auth-page">
+      <div className="auth-card">
+        <h1 className="auth-title">Create your account</h1>
+        <p className="auth-subtitle">
+          Register to receive an OTP and confirm your email.
+        </p>
+
+        {error && <div className="auth-error">{error}</div>}
+        {success && <div className="auth-success">{success}</div>}
+
+        <form onSubmit={handleSubmit} className="auth-form">
+          <label className="auth-label">
+            Name
+            <input
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              required
+              className="auth-input"
+              placeholder="Your name"
+            />
+          </label>
+
+          <label className="auth-label">
+            Email
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              className="auth-input"
+              placeholder="you@example.com"
+            />
+          </label>
+
+          <label className="auth-label">
+            Password
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              className="auth-input"
+              placeholder="Create a strong password"
+            />
+          </label>
+
+          <button type="submit" className="auth-button" disabled={loading}>
+            {loading ? "Sending OTP..." : "Register"}
+          </button>
+        </form>
+        <p className="auth-subtitle" style={{ marginTop: "12px" }}>
+          Already have an account?{" "}
+          <Link to="/login" style={{ color: "#38bdf8", textDecoration: "none" }}>
+            Log in
+          </Link>
+        </p>
+      </div>
+    </div>
+  );
+};
+
+export default Register;
+

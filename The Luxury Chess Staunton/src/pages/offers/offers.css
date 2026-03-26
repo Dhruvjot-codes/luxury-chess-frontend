@@ -1,0 +1,183 @@
+.offers-page {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 40px 20px;
+  min-height: 80vh;
+}
+
+.offers-header {
+  text-align: center;
+  margin-bottom: 50px;
+}
+
+.offers-header h1 {
+  font-size: 2.5rem;
+  color: #1a1a1a;
+  margin-bottom: 10px;
+}
+
+.offers-header p {
+  color: #666;
+  font-size: 1.1rem;
+}
+
+.offers-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 30px;
+}
+
+.offer-card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+  position: relative;
+  overflow: hidden;
+  border: 1px solid #f0f0f0;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.offer-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 35px rgba(0,0,0,0.12);
+}
+
+.offer-card.expired {
+  opacity: 0.6;
+}
+
+.offer-discount {
+  background: linear-gradient(135deg, #f12711 0%, #f5af19 100%);
+  color: white;
+  padding: 15px 20px;
+  font-size: 1.5rem;
+  font-weight: 800;
+  text-align: center;
+}
+
+.offer-content {
+  padding: 25px;
+}
+
+.offer-content h3 {
+  font-size: 1.4rem;
+  color: #333;
+  margin: 0 0 15px;
+}
+
+.offer-desc {
+  color: #555;
+  line-height: 1.6;
+  margin-bottom: 20px;
+  font-size: 1rem;
+}
+
+.offer-dates {
+  background: #f8f9fa;
+  padding: 10px;
+  border-radius: 6px;
+  text-align: center;
+  color: #444;
+}
+
+/* Admin Actions */
+.admin-offer-creation {
+  background: white;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+  margin-bottom: 50px;
+  border: 1px solid #e2e8f0;
+}
+
+.admin-offer-creation h2 {
+  margin-top: 0;
+  margin-bottom: 20px;
+  color: #1e293b;
+  font-size: 1.5rem;
+}
+
+.admin-offer-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.form-row {
+  display: flex;
+  gap: 15px;
+}
+
+.form-row input {
+  flex: 1;
+}
+
+.admin-offer-form input, 
+.admin-offer-form textarea {
+  padding: 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  font-family: inherit;
+  font-size: 1rem;
+}
+
+.admin-offer-form textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+.btn-create-offer {
+  background: #0ea5e9;
+  color: white;
+  border: none;
+  padding: 12px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-create-offer:hover {
+  background: #0284c7;
+}
+
+.admin-offer-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid #eaeaea;
+}
+
+.offer-status-badge {
+  font-size: 0.85rem;
+  font-weight: bold;
+  background: #e2e8f0;
+  padding: 5px 10px;
+  border-radius: 20px;
+  color: #475569;
+}
+
+.btn-delete-offer {
+  background: #ef4444;
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.btn-delete-offer:hover {
+  background: #dc2626;
+}
+
+.no-offers {
+  text-align: center;
+  color: #64748b;
+  font-size: 1.2rem;
+  grid-column: 1 / -1;
+  padding: 40px;
+}
