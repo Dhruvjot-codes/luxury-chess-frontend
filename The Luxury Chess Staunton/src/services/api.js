@@ -31,16 +31,32 @@ export const apiCall = async (endpoint, options = {}) => {
         localStorage.removeItem('user');
         window.location.href = '/login';
       }
-      const errorText = await response.text();
-      console.error('Error Response:', errorText);
-      throw new Error(errorText || `API Error: ${response.status}`);
+      
+      let errorMessage = `API Error: ${response.status}`;
+      try {
+        const errorData = await response.json();
+        errorMessage = errorData.message || errorData.error || errorMessage;
+      } catch (e) {
+        const errorText = await response.text().catch(() => '');
+        errorMessage = errorText || errorMessage;
+      }
+      
+      console.error('Error Response:', errorMessage);
+      throw new Error(errorMessage);
     }
     
     const data = await response.json();
     console.log('Success Response:', data);
     return data;
   } catch (error) {
+    if (error.name === 'Error' && error.message.includes('API Error')) {
+      throw error;
+    }
     console.error('API Call Error:', error);
+    // If it's already an error with a message we threw, rethrow it
+    if (error.message && !error.message.includes('fetch') && !error.message.includes('Network')) {
+      throw error;
+    }
     throw new Error('Network error. Please check your connection and try again.');
   }
 };
@@ -58,6 +74,20 @@ export const authService = {
     return await apiCall('/api/users/login', {
       method: 'POST',
       body: JSON.stringify({ email, password }),
+    });
+  },
+
+  forgotPassword: async (email) => {
+    return await apiCall('/api/users/forgot-password', {
+      method: 'POST',
+      body: JSON.stringify({ email }),
+    });
+  },
+
+  resetPassword: async (token, password) => {
+    return await apiCall(`/api/users/reset-password/${token}`, {
+      method: 'POST',
+      body: JSON.stringify({ password }),
     });
   },
   

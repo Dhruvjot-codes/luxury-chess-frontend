@@ -77,6 +77,11 @@ const Login = () => {
           </button>
         </form>
         <p className="auth-subtitle" style={{ marginTop: "12px" }}>
+          <Link to="/forgot-password" style={{ color: "#38bdf8", textDecoration: "none" }}>
+            Forgot password?
+          </Link>
+        </p>
+        <p className="auth-subtitle" style={{ marginTop: "12px" }}>
           Don&apos;t have an account yet?{" "}
           <Link to="/register" style={{ color: "#38bdf8", textDecoration: "none" }}>
             Register

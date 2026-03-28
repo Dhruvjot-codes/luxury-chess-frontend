@@ -30,15 +30,21 @@ const Register = () => {
 
       const data = await authService.register(name, email, password);
 
-      if (data.success) {
+      // Successfully sent OTP
+      if (data.activationToken) {
         setSuccess("Registration successful! Please check your email for OTP verification.");
-        // Redirect to verify page with token
-        navigate(`/verify?token=${data.token}`);
+        // Redirect to verify page with token and email in state
+        navigate("/verify", {
+          state: {
+            activationToken: data.activationToken,
+            email: email,
+          },
+        });
       } else {
         throw new Error(data.message || "Registration failed");
       }
     } catch (err) {
-      setError("Registration failed. Please try again.");
+      setError(err.message || "Registration failed. Please try again.");
     } finally {
       setLoading(false);
     }

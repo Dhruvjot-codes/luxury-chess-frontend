@@ -11,6 +11,8 @@ import AdminDashboard from "./pages/auth/AdminDashboard";
 import Offers from "./pages/offers/Offers";
 import Orders from "./pages/orders/Orders";
 import OrderHistory from "./pages/order-history/OrderHistory";
+import Forgot from "./pages/auth/Forgot";
+import ResetPassword from "./pages/auth/ResetPassword";
 import Wishlist from "./components/wishlist/Wishlist";
 import ProductSearch from "./components/search/ProductSearch";
 import WhatsAppButton from "./components/whatsapp/WhatsAppButton";
@@ -23,6 +25,8 @@ const App = () => {
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/forgot-password" element={<Forgot />} />
+        <Route path="/reset-password/:token" element={<ResetPassword />} />
         <Route path="/verify" element={<Verify />} />
         <Route path="/products" element={<Cards />} />
         <Route path="/admin" element={<AdminDashboard />} />
