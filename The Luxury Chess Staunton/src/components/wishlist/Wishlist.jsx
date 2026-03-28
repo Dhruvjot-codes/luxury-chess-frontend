@@ -1,10 +1,12 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { cardService, getStoredUser } from '../../services/api';
+import { useNavigate } from 'react-router-dom';
+import { cardService, getStoredUser, getImageUrl } from '../../services/api';
 import './Wishlist.css';
 
 const Wishlist = () => {
   const [wishlist, setWishlist] = useState([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   const user = getStoredUser();
 
@@ -52,7 +54,7 @@ const Wishlist = () => {
 
   const addToOrder = (cardId) => {
     // Navigate to order page with this card pre-selected
-    window.location.href = `/orders?card=${cardId}`;
+    navigate(`/orders?card=${cardId}`);
   };
 
   if (!user) {
@@ -88,7 +90,7 @@ const Wishlist = () => {
           <p>Browse our products and add your favorites to your wishlist</p>
           <button 
             className="browse-btn"
-            onClick={() => window.location.href = '/products'}
+            onClick={() => navigate('/products')}
           >
             Browse Products
           </button>
@@ -98,8 +100,8 @@ const Wishlist = () => {
           {wishlist.map((item) => (
             <div key={item._id} className="wishlist-item">
               <div className="item-image">
-                {item.imageUrl ? (
-                  <img src={item.imageUrl} alt={item.title} />
+                {item.image ? (
+                  <img src={getImageUrl(item.image)} alt={item.title} />
                 ) : (
                   <div className="placeholder-image">
                     <span>♟️</span>

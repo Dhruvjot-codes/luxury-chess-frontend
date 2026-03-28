@@ -126,6 +126,28 @@ header {
   transform: translateY(-1px);
 }
 
+/* Mobile Responsive */
+@media (max-width: 900px) {
+  .profile-trigger {
+    padding: 8px 12px;
+    width: 100%;
+    justify-content: flex-start;
+    border-radius: 8px;
+  }
+  
+  .username {
+    display: block; /* always show on mobile inside the link menu */
+  }
+  
+  .dropdown-menu {
+    position: static; /* fluid on mobile */
+    width: 100%;
+    margin-top: 10px;
+    box-shadow: none;
+    border: 1px solid var(--header-border);
+  }
+}
+
 /* ===== Responsiveness ===== */
 @media (max-width: 900px) {
   .header-inner {
@@ -158,15 +180,19 @@ header {
 
   .link--open {
     display: flex;
+    max-height: 80vh;
+    overflow-y: auto;
   }
 
   .link a,
   .link button {
     width: 100%;
-    padding: 12px 16px;
+    padding: 14px 16px;
     border-radius: 8px;
-    transition: background-color 0.2s ease;
+    transition: all 0.2s ease;
     margin-bottom: 5px;
+    font-size: 1rem;
+    box-sizing: border-box;
   }
 
   .link a:hover,

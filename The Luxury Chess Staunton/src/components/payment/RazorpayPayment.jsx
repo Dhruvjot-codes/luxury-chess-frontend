@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { paymentService } from '../../services/api';
 import './RazorpayPayment.css';
 
 const RazorpayPayment = ({ order, onPaymentSuccess, onPaymentError }) => {
@@ -23,20 +24,7 @@ const RazorpayPayment = ({ order, onPaymentSuccess, onPaymentError }) => {
       setLoading(true);
       
       // Create Razorpay order
-      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/payments/create`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('authToken')}`
-        },
-        body: JSON.stringify({ orderId: order._id })
-      });
-
-      const data = await response.json();
-      
-      if (!response.ok) {
-        throw new Error(data.message || 'Failed to create payment order');
-      }
+      const data = await paymentService.createOrder(order._id);
 
       await loadRazorpayScript();
 
@@ -49,29 +37,16 @@ const RazorpayPayment = ({ order, onPaymentSuccess, onPaymentError }) => {
         order_id: data.razorpayOrder.id,
         handler: async function (response) {
           try {
-            const verifyResponse = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/payments/verify`, {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${localStorage.getItem('authToken')}`
-              },
-              body: JSON.stringify({
-                razorpay_order_id: response.razorpay_order_id,
-                razorpay_payment_id: response.razorpay_payment_id,
-                razorpay_signature: response.razorpay_signature,
-                orderId: order._id
-              })
+            const verifyData = await paymentService.verifyPayment({
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_signature: response.razorpay_signature,
+              orderId: order._id
             });
 
-            const verifyData = await verifyResponse.json();
-            
-            if (verifyResponse.ok) {
-              onPaymentSuccess && onPaymentSuccess(verifyData);
-            } else {
-              onPaymentError && onPaymentError(verifyData.message || 'Payment verification failed');
-            }
+            onPaymentSuccess && onPaymentSuccess(verifyData);
           } catch (error) {
-            onPaymentError && onPaymentError('Payment verification failed');
+            onPaymentError && onPaymentError(error.message || 'Payment verification failed');
           }
         },
         prefill: {

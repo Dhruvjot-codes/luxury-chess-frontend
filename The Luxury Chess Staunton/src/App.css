@@ -1,32 +1,48 @@
 :root {
   --bg-color: radial-gradient(circle at top, #020617 0, #020617 45%, #000 100%);
   --text-color: #e5e7eb;
-  --header-bg: linear-gradient(120deg, #050816 0%, #0b1220 45%, #020617 100%);
+  --text-muted: #94a3b8;
+  --header-bg: rgba(5, 8, 22, 0.85);
   --header-text: #f9fafb;
-  --header-link: #cbd5f5;
+  --header-link: #cbd5e1;
   --header-link-hover: #ffffff;
-  --header-border: rgba(148, 163, 184, 0.35);
+  --header-border: rgba(148, 163, 184, 0.2);
+  --card-bg: rgba(30, 41, 59, 0.5);
+  --card-border: rgba(255, 255, 255, 0.1);
+  --input-bg: rgba(15, 23, 42, 0.6);
+  --input-text: #f1f5f9;
 }
 
 [data-theme="light"] {
-  --bg-color: linear-gradient(135deg, #f8fafc, #e2e8f0);
+  --bg-color: linear-gradient(135deg, #f8fafc, #f1f5f9);
   --text-color: #0f172a;
-  --header-bg: rgba(255, 255, 255, 0.95);
+  --text-muted: #475569;
+  --header-bg: rgba(255, 255, 255, 0.9);
   --header-text: #0f172a;
   --header-link: #334155;
   --header-link-hover: #0284c7;
-  --header-border: #cbd5e1;
+  --header-border: #e2e8f0;
+  --card-bg: #ffffff;
+  --card-border: #e2e8f0;
+  --input-bg: #ffffff;
+  --input-text: #0f172a;
 }
 
 [data-theme="vintage"] {
   --bg-color: linear-gradient(135deg, #f4ecd8, #dcb285);
   --text-color: #4a3b2c;
-  --header-bg: rgba(234, 221, 197, 0.95);
+  --text-muted: #6d4c41;
+  --header-bg: rgba(234, 221, 197, 0.9);
   --header-text: #3e2723;
   --header-link: #5d4037;
   --header-link-hover: #b45309;
   --header-border: #d4b895;
+  --card-bg: #fdfaf3;
+  --card-border: #d4b895;
+  --input-bg: #fffcf5;
+  --input-text: #3e2723;
 }
+
 
 /* Global app layout & background */
 body {

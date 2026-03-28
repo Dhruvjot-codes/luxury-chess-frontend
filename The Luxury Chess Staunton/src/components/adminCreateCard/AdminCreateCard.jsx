@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import "./adminCreateCard.css";
-import axios from "axios";
+import { cardService } from "../../services/api";
 
 const AdminCreateCard = () => {
 
@@ -41,21 +41,11 @@ const AdminCreateCard = () => {
       data.append("woodType", formData.woodType);
       data.append("file", formData.image);
 
-      const token = localStorage.getItem("authToken");
-      const res = await axios.post(
-        "http://localhost:5000/api/cards",
-        data,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`
-          },
-          withCredentials: true
-        }
-      );
+      const res = await cardService.create(data);
 
       alert("Card Created Successfully");
 
-      console.log(res.data);
+      console.log(res);
 
     } catch (error) {
 

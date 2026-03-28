@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { cardService } from '../../services/api';
+import { cardService, getImageUrl } from '../../services/api';
 import './ProductSearch.css';
 
 const ProductSearch = ({ onProductSelect, onWishlistToggle }) => {
@@ -195,8 +195,8 @@ const ProductSearch = ({ onProductSelect, onWishlistToggle }) => {
             {filteredProducts.map((product) => (
               <div key={product._id} className="product-card">
                 <div className="product-image">
-                  {product.imageUrl ? (
-                    <img src={product.imageUrl} alt={product.title} />
+                  {product.image ? (
+                    <img src={getImageUrl(product.image)} alt={product.title} />
                   ) : (
                     <div className="placeholder-image">♟️</div>
                   )}

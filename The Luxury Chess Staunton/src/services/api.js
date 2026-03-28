@@ -1,37 +1,47 @@
 // API Configuration
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+export const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+
+export const getImageUrl = (path) => {
+  if (!path) return '';
+  if (path.startsWith('http')) return path;
+  // Ensure path starts with /
+  const cleanPath = path.startsWith('/') ? path : `/${path}`;
+  return `${API_BASE_URL}${cleanPath}`;
+};
 
 // Simple API call function with proper error handling
 export const apiCall = async (endpoint, options = {}) => {
   try {
     const url = `${API_BASE_URL}${endpoint}`;
     const token = localStorage.getItem('authToken');
-    
+
     const headers = {
       'Content-Type': 'application/json',
       ...options.headers,
     };
-    
+
+    if (options.body instanceof FormData) {
+      delete headers['Content-Type'];
+    }
+
     if (token) {
       headers['Authorization'] = `Bearer ${token}`;
     }
-    
+
     console.log('API Call:', { url, method: options.method || 'GET', headers });
-    
+
     const response = await fetch(url, {
       ...options,
       headers
     });
-    
-    console.log('Response:', { status: response.status, ok: response.ok });
-    
+
     if (!response.ok) {
       if (response.status === 401) {
         localStorage.removeItem('authToken');
         localStorage.removeItem('user');
         window.location.href = '/login';
       }
-      
+
       let errorMessage = `API Error: ${response.status}`;
       try {
         const errorData = await response.json();
@@ -40,11 +50,11 @@ export const apiCall = async (endpoint, options = {}) => {
         const errorText = await response.text().catch(() => '');
         errorMessage = errorText || errorMessage;
       }
-      
+
       console.error('Error Response:', errorMessage);
       throw new Error(errorMessage);
     }
-    
+
     const data = await response.json();
     console.log('Success Response:', data);
     return data;
@@ -53,7 +63,6 @@ export const apiCall = async (endpoint, options = {}) => {
       throw error;
     }
     console.error('API Call Error:', error);
-    // If it's already an error with a message we threw, rethrow it
     if (error.message && !error.message.includes('fetch') && !error.message.includes('Network')) {
       throw error;
     }
@@ -69,7 +78,7 @@ export const authService = {
       body: JSON.stringify({ username, email, password }),
     });
   },
-  
+
   login: async (email, password) => {
     return await apiCall('/api/users/login', {
       method: 'POST',
@@ -90,26 +99,26 @@ export const authService = {
       body: JSON.stringify({ password }),
     });
   },
-  
+
   verifyOtp: async (activationToken, otp) => {
     return await apiCall('/api/users/register/verify', {
       method: 'POST',
       body: JSON.stringify({ activationToken, otp }),
     });
   },
-  
+
   getProfile: async () => {
     return await apiCall('/api/users/profile', {
       method: 'GET',
     });
   },
-  
+
   verifyAdmin: async () => {
     return await apiCall('/api/users/verify-admin', {
       method: 'GET',
     });
   },
-  
+
   logout: () => {
     localStorage.removeItem('authToken');
     localStorage.removeItem('user');
@@ -124,10 +133,41 @@ export const cardService = {
       method: 'GET',
     });
   },
-  
+
   delete: async (id) => {
     return await apiCall(`/api/cards/${id}`, {
       method: 'DELETE',
+    });
+  },
+  
+  create: async (data) => {
+    return await apiCall('/api/cards', {
+      method: 'POST',
+      body: data,
+    });
+  },
+
+  update: async (id, data) => {
+    return await apiCall(`/api/cards/${id}`, {
+      method: 'PUT',
+      body: data,
+    });
+  },
+};
+
+// Payment Services
+export const paymentService = {
+  createOrder: async (orderId) => {
+    return await apiCall('/api/payments/create', {
+      method: 'POST',
+      body: JSON.stringify({ orderId }),
+    });
+  },
+
+  verifyPayment: async (data) => {
+    return await apiCall('/api/payments/verify', {
+      method: 'POST',
+      body: JSON.stringify(data),
     });
   },
 };
@@ -140,15 +180,14 @@ export const orderService = {
       body: JSON.stringify(orderData),
     });
   },
-  
-  // Alias for createRequest as used in Cards.jsx
+
   createRequest: async (cardId, quantity, notes) => {
     return await apiCall('/api/orders', {
       method: 'POST',
       body: JSON.stringify({ cardId, quantity, notes }),
     });
   },
-  
+
   getAll: async () => {
     return await apiCall('/api/orders', {
       method: 'GET',
@@ -199,39 +238,23 @@ export const offerService = {
       method: 'GET',
     });
   },
-  
+
   getActive: async () => {
     return await apiCall('/api/offers/active', {
       method: 'GET',
     });
   },
-  
+
   create: async (offerData) => {
     return await apiCall('/api/offers', {
       method: 'POST',
       body: JSON.stringify(offerData),
     });
   },
-  
+
   delete: async (id) => {
     return await apiCall(`/api/offers/${id}`, {
       method: 'DELETE',
-    });
-  },
-};
-
-// Payment Services
-export const paymentService = {
-  createOrder: async (paymentData) => {
-    return await apiCall('/api/payments/create-order', {
-      method: 'POST',
-      body: JSON.stringify(paymentData),
-    });
-  },
-  
-  verifyPayment: async (paymentId) => {
-    return await apiCall(`/api/payments/verify/${paymentId}`, {
-      method: 'GET',
     });
   },
 };
@@ -243,7 +266,7 @@ export const adminService = {
       method: 'GET',
     });
   },
-  
+
   getOrders: async () => {
     return await apiCall('/api/admin/orders', {
       method: 'GET',
@@ -264,7 +287,7 @@ export const adminService = {
   },
 };
 
-// Helper functions
+// Helper exports
 export const getAuthToken = () => localStorage.getItem('authToken');
 export const getStoredUser = () => {
   const user = localStorage.getItem('user');

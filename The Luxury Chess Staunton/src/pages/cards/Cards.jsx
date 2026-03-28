@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { cardService, orderService, getStoredUser } from "../../services/api";
+import { cardService, orderService, getStoredUser, getImageUrl } from "../../services/api";
 import "./cards.css";
-import axios from "axios";
 
 const Cards = () => {
   const [cards, setCards] = useState([]);
@@ -12,9 +11,19 @@ const Cards = () => {
   const [orderForm, setOrderForm] = useState({ quantity: 1, notes: "" });
   const [searchTerm, setSearchTerm] = useState("");
   const [wishlist, setWishlist] = useState([]);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   
   const user = getStoredUser();
   const isAdmin = user && user.role === 'admin';
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   useEffect(() => {
     fetchCards();
@@ -126,17 +135,13 @@ const Cards = () => {
         formData.append("file", editingCard.newImage);
       }
 
-      const token = localStorage.getItem("authToken");
-      await axios.put(`http://localhost:5000/api/cards/${editingCard._id}`, formData, {
-        headers: { Authorization: `Bearer ${token}` },
-        withCredentials: true
-      });
+      await cardService.update(editingCard._id, formData);
 
       alert("Product updated successfully");
       setEditingCard(null);
       fetchCards();
     } catch (err) {
-      alert(err.response?.data?.message || "Failed to update product");
+      alert(err.message || "Failed to update product");
     }
   };
 
@@ -152,6 +157,11 @@ const Cards = () => {
     
     return matchesSearch;
   });
+
+  // Limit number of items on mobile as requested
+  const displayedCards = (isMobile && !searchTerm) 
+    ? filteredCards.slice(0, Math.ceil(filteredCards.length / 2)) 
+    : filteredCards;
 
   return (
     <div className="cards-page">
@@ -195,10 +205,10 @@ const Cards = () => {
         ) : filteredCards.length === 0 ? (
           <p>No products available.</p>
         ) : (
-          filteredCards.map(card => (
+          displayedCards.map(card => (
             <div key={card._id} className="card-item">
               {card.image && (
-                <img src={`http://localhost:5000${card.image}`} alt={card.title} className="card-img" />
+                <img src={getImageUrl(card.image)} alt={card.title} className="card-img" />
               )}
               <div className="card-content">
                 <div className="card-header">

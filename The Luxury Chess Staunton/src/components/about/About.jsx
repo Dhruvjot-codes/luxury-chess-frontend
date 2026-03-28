@@ -48,9 +48,9 @@ const About = () => {
           <div id="contact" style={{ marginTop: "40px", paddingTop: "20px", borderTop: "1px solid #eaeaea" }}>
             <h3 style={{ marginBottom: "15px", fontSize: "1.4em", color: "#333" }}>Contact Us</h3>
             <p style={{ display: "flex", alignItems: "center", flexWrap: "wrap", gap: "15px" }}>
-              <span style={{ fontSize: "1.1em", fontWeight: "600" }}>+91 98765 43210</span>
+              <span style={{ fontSize: "1.1em", fontWeight: "600" }}>+91 81468 69295</span>
               <a 
-                href="https://wa.me/919876543210" 
+                href="https://wa.me/918146869295" 
                 target="_blank" 
                 rel="noreferrer"
                 style={{ 

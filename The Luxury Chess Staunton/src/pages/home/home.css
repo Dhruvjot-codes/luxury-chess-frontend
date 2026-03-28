@@ -3,8 +3,9 @@
   min-height: 90vh;
   display: flex;
   align-items: center;
-  background: #0f0f0f;
-  color: white;
+  background: var(--bg-color);
+  color: var(--text-color);
+  transition: background 0.5s ease, color 0.5s ease;
 }
 
 .hero-container {
@@ -32,7 +33,7 @@
   font-size: 18px;
   line-height: 1.7;
   margin-bottom: 30px;
-  color: #d3d3d3;
+  color: var(--text-muted);
 }
 
 .hero-btn {
