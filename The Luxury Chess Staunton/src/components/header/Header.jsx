@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "./header.css";
+import logo from "../../assets/logo.png";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { getAuthToken, getStoredUser, authService } from "../../services/api";
 import ProfileDropdown from "../profile/ProfileDropdown";
@@ -40,7 +41,10 @@ const Header = () => {
   return (
     <header>
       <div className="header-inner">
-        <div className="logo">The Luxury Chess Staunton</div>
+        <div className="logo-container" onClick={() => navigate("/")} style={{ cursor: 'pointer' }}>
+          <img src={logo} alt="The Luxury Chess Staunton" className="header-logo" />
+          <div className="logo-text">The Luxury Chess Staunton</div>
+        </div>
 
         <button
           className={`menu-toggle ${isOpen ? "menu-toggle--open" : ""}`}
