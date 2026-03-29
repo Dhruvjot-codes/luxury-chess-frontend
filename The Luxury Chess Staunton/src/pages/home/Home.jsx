@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./home.css";
-import chessPiece from "../../assets/chess-piece.png";
+import heroImage from "../../assets/horse.jpeg";
 import Testimonials from "../../components/testimonials/testimonials";
 import AdminCreateCard from "../../components/adminCreateCard/AdminCreateCard";
 import About from "../../components/about/About";
@@ -60,7 +60,7 @@ const Home = () => {
 
           {/* RIGHT IMAGE SECTION */}
           <div className="hero-image">
-            <img src={chessPiece} alt="Luxury Chess Piece" />
+            <img src={heroImage} alt="Luxury Chess Piece" />
           </div>
         </div>
       </section>

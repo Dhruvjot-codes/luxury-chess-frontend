@@ -1,6 +1,6 @@
 import React from "react";
 import "./About.css";
-import chessImage from "../../assets/chess-piece.png";
+import horseImage from "../../assets/horse 2.jpeg";
 
 const About = () => {
   return (
@@ -10,7 +10,7 @@ const About = () => {
 
         {/* LEFT IMAGE */}
         <div className="about-image">
-          <img src={chessImage} alt="Handcrafted Chess Piece" />
+          <img src={horseImage} alt="Handcrafted Chess Piece" />
         </div>
 
         {/* RIGHT TEXT */}
