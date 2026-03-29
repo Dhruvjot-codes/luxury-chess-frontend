@@ -6,7 +6,7 @@ import Testimonials from "../../components/testimonials/testimonials";
 import AdminCreateCard from "../../components/adminCreateCard/AdminCreateCard";
 import About from "../../components/about/About";
 import Footer from "../../components/footer/footer";
-import { getAuthToken, getStoredUser, cardService } from "../../services/api";
+import { getAuthToken, getStoredUser, cardService, getImageUrl } from "../../services/api";
 
 const Home = () => {
   const navigate = useNavigate();
