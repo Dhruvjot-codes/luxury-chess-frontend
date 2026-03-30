@@ -245,10 +245,10 @@ export const offerService = {
     });
   },
 
-  create: async (offerData) => {
+  create: async (formData) => {
     return await apiCall('/api/offers', {
       method: 'POST',
-      body: JSON.stringify(offerData),
+      body: formData,
     });
   },
 

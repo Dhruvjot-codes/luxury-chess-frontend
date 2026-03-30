@@ -119,7 +119,7 @@ const Cards = () => {
   };
 
   const startEditing = (card) => {
-    setEditingCard({ ...card, newImage: null });
+    setEditingCard({ ...card, newImages: [] });
   };
 
   const handleUpdate = async (e) => {
@@ -131,8 +131,11 @@ const Cards = () => {
       formData.append("pricePerPiece", editingCard.pricePerPiece);
       formData.append("pieceCount", editingCard.pieceCount);
       formData.append("woodType", editingCard.woodType || "");
-      if (editingCard.newImage) {
-        formData.append("file", editingCard.newImage);
+      
+      if (editingCard.newImages && editingCard.newImages.length > 0) {
+        editingCard.newImages.forEach(file => {
+          formData.append("files", file);
+        });
       }
 
       await cardService.update(editingCard._id, formData);
@@ -207,8 +210,24 @@ const Cards = () => {
         ) : (
           displayedCards.map(card => (
             <div key={card._id} className="card-item">
-              {card.image && (
-                <img src={getImageUrl(card.image)} alt={card.title} className="card-img" />
+              {card.images && card.images.length > 0 && (
+                <div className="card-img-container" style={{ position: 'relative' }}>
+                  <img src={getImageUrl(card.images[0])} alt={card.title} className="card-img" />
+                  {card.images.length > 1 && (
+                    <div className="img-count-badge" style={{
+                      position: 'absolute',
+                      bottom: '10px',
+                      right: '10px',
+                      background: 'rgba(0,0,0,0.6)',
+                      color: 'white',
+                      padding: '2px 8px',
+                      borderRadius: '10px',
+                      fontSize: '12px'
+                    }}>
+                      +{card.images.length - 1} more
+                    </div>
+                  )}
+                </div>
               )}
               <div className="card-content">
                 <div className="card-header">

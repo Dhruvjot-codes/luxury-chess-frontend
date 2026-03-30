@@ -72,8 +72,8 @@ const Home = () => {
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: "30px" }}>
             {featuredProducts.map(card => (
               <div key={card._id} style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "15px", overflow: "hidden", cursor: "pointer", transition: "transform 0.3s" }} onMouseOver={(e) => e.currentTarget.style.transform = "translateY(-10px)"} onMouseOut={(e) => e.currentTarget.style.transform = "translateY(0)"} onClick={() => navigate('/products')}>
-                {card.image && (
-                  <img src={getImageUrl(card.image)} alt={card.title} style={{ width: "100%", height: "250px", objectFit: "cover", borderBottom: "3px solid #f59e0b" }} />
+                {card.images && card.images.length > 0 && (
+                  <img src={getImageUrl(card.images[0])} alt={card.title} style={{ width: "100%", height: "250px", objectFit: "cover", borderBottom: "3px solid #f59e0b" }} />
                 )}
                 <div style={{ padding: "20px", textAlign: "left" }}>
                   <h3 style={{ margin: "0 0 10px 0", fontSize: "1.3rem" }}>{card.title}</h3>

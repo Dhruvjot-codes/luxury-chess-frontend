@@ -10,7 +10,8 @@ const AdminCreateCard = () => {
     pricePerPiece: "",
     pieceCount: "",
     woodType: "",
-    image: null
+    image: null,
+    images: []
   });
 
   const handleChange = (e) => {
@@ -20,10 +21,16 @@ const AdminCreateCard = () => {
     });
   };
 
-  const handleFile = (e) => {
+  const handleFiles = (e) => {
+    const selectedFiles = Array.from(e.target.files);
+    if (selectedFiles.length > 10) {
+      alert("You can only upload up to 10 images");
+      e.target.value = null;
+      return;
+    }
     setFormData({
       ...formData,
-      image: e.target.files[0]
+      images: selectedFiles
     });
   };
 
@@ -31,27 +38,28 @@ const AdminCreateCard = () => {
     e.preventDefault();
 
     try {
-
       const data = new FormData();
-
       data.append("title", formData.title);
       data.append("description", formData.description);
       data.append("pricePerPiece", formData.pricePerPiece);
       data.append("pieceCount", formData.pieceCount);
       data.append("woodType", formData.woodType);
-      data.append("file", formData.image);
+      
+      // Append multiple files to "files" field
+      formData.images.forEach(file => {
+        data.append("files", file);
+      });
 
       const res = await cardService.create(data);
-
-      alert("Card Created Successfully");
-
+      alert("Product Created Successfully with " + formData.images.length + " images!");
       console.log(res);
+      // Reset form or redirect? 
+      e.target.reset();
+      setFormData({ ...formData, images: [] });
 
     } catch (error) {
-
       console.log(error);
-      alert("Error creating card");
-
+      alert("Error creating product: " + (error.message || "Unknown error"));
     }
   };
 
@@ -101,11 +109,16 @@ const AdminCreateCard = () => {
           onChange={handleChange}
         />
 
-        <input
-          type="file"
-          onChange={handleFile}
-          required
-        />
+        <div style={{ margin: "10px 0", textAlign: "left" }}>
+          <label style={{ fontSize: "14px", color: "#666" }}>Select images (Max 10)</label>
+          <input
+            type="file"
+            onChange={handleFiles}
+            multiple
+            accept="image/*"
+            required
+          />
+        </div>
 
         <button type="submit">
           Create Card
