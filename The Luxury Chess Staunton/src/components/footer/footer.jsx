@@ -20,32 +20,32 @@ const Footer = () => {
         <div className="footer-section" style={{ gridColumn: "span 2" }}>
           <h3 style={{ marginBottom: "15px", color: "var(--header-link)" }}>Customer Support & Policies</h3>
 
-          <details style={{ marginBottom: "10px", cursor: "pointer", background: "rgba(0,0,0,0.05)", padding: "10px", borderRadius: "8px" }}>
-            <summary style={{ fontWeight: "bold", fontSize: "1.05rem" }}>❓ Frequently Asked Questions</summary>
-            <div style={{ padding: "10px", marginTop: "10px", borderTop: "1px solid rgba(0,0,0,0.1)", fontSize: "0.9rem", color: "var(--text-color)" }}>
+          <details className="policy-details">
+            <summary>❓ Frequently Asked Questions</summary>
+            <div className="policy-content">
               <p><strong>Why this platform?</strong><br />We connect you directly to authentic, premium artisans of India, ensuring flawless craftsmanship and the lowest prices without middlemen.</p>
               <p style={{ marginTop: "10px" }}><strong>Are chess boards available or not?</strong><br />Yes, for now, high quality boards are fully available with your pieces!</p>
               <p style={{ marginTop: "10px" }}><strong>What materials are you using?</strong><br />We strictly use Grade-A ethically sourced Boxwood, Ebony, Rosewood, and Padauk woods natively imported.</p>
             </div>
           </details>
 
-          <details style={{ marginBottom: "10px", cursor: "pointer", background: "rgba(0,0,0,0.05)", padding: "10px", borderRadius: "8px" }}>
-            <summary style={{ fontWeight: "bold", fontSize: "1.05rem" }}>📦 Shipping Policy</summary>
-            <div style={{ padding: "10px", marginTop: "10px", borderTop: "1px solid rgba(0,0,0,0.1)", fontSize: "0.9rem", color: "var(--text-color)" }}>
+          <details className="policy-details">
+            <summary>📦 Shipping Policy</summary>
+            <div className="policy-content">
               Fast and highly secure global shipping via DHL/FedEx. Dispatches are made instantly after the 24-hour approval span. Transit usually takes 1-2 weeks internationally. Tracking tags are supplied via email natively.
             </div>
           </details>
 
-          <details style={{ marginBottom: "10px", cursor: "pointer", background: "rgba(0,0,0,0.05)", padding: "10px", borderRadius: "8px" }}>
-            <summary style={{ fontWeight: "bold", fontSize: "1.05rem" }}>↩️ Return Policy</summary>
-            <div style={{ padding: "10px", marginTop: "10px", borderTop: "1px solid rgba(0,0,0,0.1)", fontSize: "0.9rem", color: "var(--text-color)" }}>
+          <details className="policy-details">
+            <summary>↩️ Return Policy</summary>
+            <div className="policy-content">
               We enforce a strict and guaranteed 7-day return policy specifically for transit damages or manufacturing defects. Items must inherently maintain their original boxing elements for a successful dispute.
             </div>
           </details>
 
-          <details style={{ marginBottom: "10px", cursor: "pointer", background: "rgba(0,0,0,0.05)", padding: "10px", borderRadius: "8px" }}>
-            <summary style={{ fontWeight: "bold", fontSize: "1.05rem" }}>🔒 Privacy Policy</summary>
-            <div style={{ padding: "10px", marginTop: "10px", borderTop: "1px solid rgba(0,0,0,0.1)", fontSize: "0.9rem", color: "var(--text-color)" }}>
+          <details className="policy-details">
+            <summary>🔒 Privacy Policy</summary>
+            <div className="policy-content">
               Your integrity is pristine. None of your data is silently harvested to third parties. We preserve emails only for direct communication, and all payments traverse safely heavily encrypted backbones smoothly.
             </div>
           </details>

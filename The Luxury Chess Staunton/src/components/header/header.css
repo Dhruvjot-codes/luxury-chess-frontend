@@ -39,8 +39,8 @@ header {
   height: 55px;
   border-radius: 50%;
   object-fit: cover;
-  border: 2px solid #f59e0b;
-  box-shadow: 0 0 15px rgba(245, 158, 11, 0.3);
+  border: 2px solid #4542f5;
+  box-shadow: 0 0 15px rgba(69, 66, 245, 0.3);
   transition: transform 0.3s ease;
 }
 
@@ -274,7 +274,7 @@ header {
 
 .admin-badge {
   font-size: 0.75rem;
-  background: linear-gradient(90deg, #f59e0b, #dc2626);
+  background: linear-gradient(90deg, #4542f5, #3b39d1);
   color: white;
   padding: 2px 8px;
   border-radius: 12px;

@@ -1,7 +1,8 @@
 .footer {
-  background: #0f0f0f;
-  color: white;
+  background: var(--bg-color);
+  color: var(--text-color);
   padding-top: 60px;
+  border-top: 1px solid var(--header-border);
 }
 
 .footer-container {
@@ -12,35 +13,18 @@
   gap: 40px;
 }
 
-.footer-section h2 {
-  color: #f5c542;
+.footer-section h2, .footer-section h3 {
+  color: #4542f5;
   margin-bottom: 15px;
 }
 
-.footer-section h3 {
-  color: #f5c542;
-  margin-bottom: 15px;
-}
-
-.footer-section p {
-  color: #d3d3d3;
+.footer-section p, .footer-section ul li {
+  color: var(--text-muted);
   line-height: 1.6;
 }
 
-.footer-section ul {
-  list-style: none;
-  padding: 0;
-}
-
-.footer-section ul li {
-  margin-bottom: 10px;
-  color: #d3d3d3;
-  cursor: pointer;
-  transition: 0.3s;
-}
-
 .footer-section ul li:hover {
-  color: #f5c542;
+  color: #4542f5;
 }
 
 .whatsapp-contact {
@@ -75,22 +59,47 @@
   flex-shrink: 0;
 }
 
-/* Dark theme support */
-[data-theme="dark"] .whatsapp-link {
-  background: rgba(37, 211, 102, 0.15);
-  border-color: rgba(37, 211, 102, 0.3);
+
+.policy-details {
+  margin-bottom: 15px;
+  cursor: pointer;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  padding: 12px;
+  border-radius: 10px;
+  transition: all 0.3s ease;
 }
 
-[data-theme="dark"] .whatsapp-link:hover {
-  background: rgba(37, 211, 102, 0.25);
+.policy-details:hover {
+  border-color: #4542f5;
+  box-shadow: 0 5px 15px rgba(69, 66, 245, 0.1);
+}
+
+.policy-details summary {
+  font-weight: bold;
+  font-size: 1.1rem;
+  color: var(--text-color);
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.policy-content {
+  padding: 15px;
+  margin-top: 10px;
+  border-top: 1px solid var(--header-border);
+  font-size: 0.95rem;
+  color: var(--text-muted);
+  line-height: 1.7;
 }
 
 .footer-bottom {
   text-align: center;
-  padding: 20px;
+  padding: 30px;
   margin-top: 40px;
-  border-top: 1px solid #333;
-  color: #aaa;
+  border-top: 1px solid var(--header-border);
+  color: var(--text-muted);
 }
 
 /* Responsive */

@@ -73,21 +73,21 @@ const Home = () => {
             {featuredProducts.map(card => (
               <div key={card._id} style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "15px", overflow: "hidden", cursor: "pointer", transition: "transform 0.3s" }} onMouseOver={(e) => e.currentTarget.style.transform = "translateY(-10px)"} onMouseOut={(e) => e.currentTarget.style.transform = "translateY(0)"} onClick={() => navigate('/products')}>
                 {card.images && card.images.length > 0 && (
-                  <img src={getImageUrl(card.images[0])} alt={card.title} style={{ width: "100%", height: "250px", objectFit: "cover", borderBottom: "3px solid #f59e0b" }} />
+                  <img src={getImageUrl(card.images[0])} alt={card.title} style={{ width: "100%", height: "250px", objectFit: "cover", borderBottom: "3px solid #4542f5" }} />
                 )}
                 <div style={{ padding: "20px", textAlign: "left" }}>
                   <h3 style={{ margin: "0 0 10px 0", fontSize: "1.3rem" }}>{card.title}</h3>
                   <p style={{ margin: "0 0 15px 0", opacity: "0.8", fontSize: "0.95rem" }}>{card.description.substring(0, 80)}...</p>
-                  <p style={{ fontWeight: "bold", fontSize: "1.1rem", color: "#f59e0b", margin: 0 }}>₹{card.pricePerPiece}</p>
+                  <p style={{ fontWeight: "bold", fontSize: "1.1rem", color: "#4542f5", margin: 0 }}>₹{card.pricePerPiece}</p>
                 </div>
               </div>
             ))}
           </div>
           <button 
             onClick={() => navigate('/products')} 
-            style={{ marginTop: "40px", padding: "12px 30px", background: "transparent", border: "2px solid #f59e0b", color: "#f59e0b", borderRadius: "30px", fontSize: "1.1rem", cursor: "pointer", fontWeight: "bold", transition: "0.3s" }}
-            onMouseOver={(e) => { e.target.style.background = "#f59e0b"; e.target.style.color = "white"; }}
-            onMouseOut={(e) => { e.target.style.background = "transparent"; e.target.style.color = "#f59e0b"; }}
+            style={{ marginTop: "40px", padding: "12px 30px", background: "transparent", border: "2px solid #4542f5", color: "#4542f5", borderRadius: "30px", fontSize: "1.1rem", cursor: "pointer", fontWeight: "bold", transition: "0.3s" }}
+            onMouseOver={(e) => { e.target.style.background = "#4542f5"; e.target.style.color = "white"; }}
+            onMouseOut={(e) => { e.target.style.background = "transparent"; e.target.style.color = "#4542f5"; }}
           >
             View Entire Collection
           </button>

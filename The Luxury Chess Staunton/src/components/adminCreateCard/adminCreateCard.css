@@ -1,61 +1,55 @@
 .admin-card {
-
   width: 100%;
   padding: 80px 0;
-  background: #121212;
-  color: white;
+  background: var(--bg-color);
+  color: var(--text-color);
   text-align: center;
-
+  border-top: 1px solid var(--header-border);
 }
 
 .admin-card h2 {
-
-  color: #f5c542;
+  color: #4542f5;
   margin-bottom: 30px;
   font-size: 32px;
-
 }
 
 .admin-form {
-
   width: 90%;
   max-width: 600px;
   margin: auto;
   display: flex;
   flex-direction: column;
   gap: 15px;
-
 }
 
 .admin-form input,
 .admin-form textarea {
-
   padding: 12px;
   border-radius: 6px;
-  border: none;
+  border: 1px solid var(--header-border);
+  background: var(--input-bg);
+  color: var(--text-color);
   outline: none;
-
 }
 
 .admin-form textarea {
-
   min-height: 120px;
-
 }
 
 .admin-form button {
-
   padding: 14px;
-  background: #f5c542;
+  background: #4542f5;
+  color: white;
   border: none;
   font-size: 16px;
   cursor: pointer;
   border-radius: 6px;
-
+  font-weight: bold;
+  transition: all 0.3s ease;
 }
 
 .admin-form button:hover {
-
-  background: #e2b437;
-
+  background: #3b39d1;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(69, 66, 245, 0.3);
 }
