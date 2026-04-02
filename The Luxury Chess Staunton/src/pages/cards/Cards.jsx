@@ -11,6 +11,8 @@ const Cards = () => {
   const [orderForm, setOrderForm] = useState({ quantity: 1, notes: "" });
   const [searchTerm, setSearchTerm] = useState("");
   const [wishlist, setWishlist] = useState([]);
+  const [activePopupProduct, setActivePopupProduct] = useState(null);
+  const [cartQuantity, setCartQuantity] = useState(1);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   
   const user = getStoredUser();
@@ -24,6 +26,12 @@ const Cards = () => {
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
+
+  useEffect(() => {
+    if (activePopupProduct) {
+      setCartQuantity(1);
+    }
+  }, [activePopupProduct]);
 
   useEffect(() => {
     fetchCards();
@@ -119,7 +127,22 @@ const Cards = () => {
   };
 
   const startEditing = (card) => {
-    setEditingCard({ ...card, newImages: [] });
+    setEditingCard({ 
+      ...card, 
+      newImages: [],
+      discountPercentage: card.discountPercentage || 0,
+      material: card.material || "",
+      dimensions: card.dimensions || "",
+      inTheBox: card.inTheBox || "",
+      weight: card.weight || "",
+      suitableFor: card.suitableFor || "",
+      note: card.note || "",
+      disclaimer: card.disclaimer || "",
+      shippingInfo: card.shippingInfo || "",
+      deliveryPrice: card.deliveryPrice || "",
+      warrantyInfo: card.warrantyInfo || "",
+      securePaymentInfo: card.securePaymentInfo || ""
+    });
   };
 
   const handleUpdate = async (e) => {
@@ -131,6 +154,21 @@ const Cards = () => {
       formData.append("pricePerPiece", editingCard.pricePerPiece);
       formData.append("pieceCount", editingCard.pieceCount);
       formData.append("woodType", editingCard.woodType || "");
+      formData.append("discountPercentage", editingCard.discountPercentage || 0);
+      formData.append("material", editingCard.material || "");
+      formData.append("dimensions", editingCard.dimensions || "");
+      formData.append("inTheBox", editingCard.inTheBox || "");
+      formData.append("weight", editingCard.weight || "");
+      formData.append("suitableFor", editingCard.suitableFor || "");
+      formData.append("note", editingCard.note || "");
+      formData.append("disclaimer", editingCard.disclaimer || "");
+      formData.append("shippingInfo", editingCard.shippingInfo || "");
+      formData.append("deliveryPrice", editingCard.deliveryPrice || "");
+      formData.append("warrantyInfo", editingCard.warrantyInfo || "");
+      formData.append("securePaymentInfo", editingCard.securePaymentInfo || "");
+      
+      // Send existing images that were not removed
+      formData.append("existingImages", JSON.stringify(editingCard.images || []));
       
       if (editingCard.newImages && editingCard.newImages.length > 0) {
         editingCard.newImages.forEach(file => {
@@ -146,6 +184,13 @@ const Cards = () => {
     } catch (err) {
       alert(err.message || "Failed to update product");
     }
+  };
+
+  const removeExistingImage = (imageUrl) => {
+    setEditingCard({
+      ...editingCard,
+      images: editingCard.images.filter(img => img !== imageUrl)
+    });
   };
 
   if (loading) return <div className="cards-loading">Loading products...</div>;
@@ -208,71 +253,65 @@ const Cards = () => {
         ) : filteredCards.length === 0 ? (
           <p>No products available.</p>
         ) : (
-          displayedCards.map(card => (
-            <div key={card._id} className="card-item">
-              {card.images && card.images.length > 0 && (
-                <div className="card-img-container" style={{ position: 'relative' }}>
-                  <img src={getImageUrl(card.images[0])} alt={card.title} className="card-img" />
-                  {card.images.length > 1 && (
-                    <div className="img-count-badge" style={{
-                      position: 'absolute',
-                      bottom: '10px',
-                      right: '10px',
-                      background: 'rgba(0,0,0,0.6)',
-                      color: 'white',
-                      padding: '2px 8px',
-                      borderRadius: '10px',
-                      fontSize: '12px'
-                    }}>
-                      +{card.images.length - 1} more
+          displayedCards.map(card => {
+            const discountedPrice = card.pricePerPiece * (1 - (card.discountPercentage || 0) / 100);
+
+            return (
+              <div 
+                key={card._id} 
+                className="card-item"
+                onMouseEnter={() => !isMobile && setActivePopupProduct(card)}
+                onClick={() => setActivePopupProduct(card)}
+              >
+                {card.images && card.images.length > 0 && (
+                  <div className="card-img-container">
+                    <div className="main-img-wrapper" style={{ position: 'relative' }}>
+                      <img src={getImageUrl(card.images[0])} alt={card.title} className="card-img" />
+                      {(card.discountPercentage || 0) > 0 && (
+                        <div className="discount-badge-grid">
+                          {card.discountPercentage}% OFF
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+                <div className="card-content" onClick={(e) => e.stopPropagation()}>
+                  <div className="card-header">
+                    <h3>{card.title}</h3>
+                    <button 
+                      className="wishlist-btn"
+                      onClick={(e) => { e.stopPropagation(); toggleWishlist(card._id); }}
+                    >
+                      {isInWishlist(card._id) ? '❤️' : '🤍'}
+                    </button>
+                  </div>
+                  
+                  <div className="card-price-info">
+                    {card.discountPercentage > 0 ? (
+                      <>
+                        <span className="price-current">₹{Math.floor(discountedPrice)}</span>
+                        <span className="price-original">₹{card.pricePerPiece}</span>
+                      </>
+                    ) : (
+                      <span className="price-current">₹{card.pricePerPiece}</span>
+                    )}
+                  </div>
+
+                  <div className="card-details">
+                    <span>Pieces: {card.pieceCount}</span>
+                    {card.woodType && <span>Wood: {card.woodType}</span>}
+                  </div>
+
+                  {isAdmin && (
+                    <div className="admin-actions">
+                      <button onClick={(e) => { e.stopPropagation(); startEditing(card); }} className="btn-edit">Edit</button>
+                      <button onClick={(e) => { e.stopPropagation(); handleDelete(card._id); }} className="btn-delete">Delete</button>
                     </div>
                   )}
                 </div>
-              )}
-              <div className="card-content">
-                <div className="card-header">
-                  <h3>{card.title}</h3>
-                  <button 
-                    className="wishlist-btn"
-                    onClick={() => toggleWishlist(card._id)}
-                    style={{
-                      background: 'none',
-                      border: 'none',
-                      fontSize: '1.5rem',
-                      cursor: 'pointer',
-                      padding: '5px'
-                    }}
-                  >
-                    {isInWishlist(card._id) ? '❤️' : '🤍'}
-                  </button>
-                </div>
-                <p>{card.description}</p>
-                <div className="card-details">
-                  <span>Price: ₹{card.pricePerPiece}</span>
-                  <span>Pieces: {card.pieceCount}</span>
-                  {card.woodType && <span>Wood: {card.woodType}</span>}
-                </div>
-
-                <div style={{ marginTop: "15px" }}>
-                  <button 
-                    onClick={() => openOrderModal(card)} 
-                    style={{ background: "#2ecc71", color: "white", padding: "10px", width: "100%", borderRadius: "5px", border: "none", fontWeight: "bold", cursor: "pointer", transition: "0.2s" }}
-                    onMouseOver={(e) => e.target.style.background = "#27ae60"}
-                    onMouseOut={(e) => e.target.style.background = "#2ecc71"}
-                  >
-                    Order This
-                  </button>
-                </div>
-                
-                {isAdmin && (
-                  <div className="admin-actions">
-                    <button onClick={() => startEditing(card)} className="btn-edit">Edit</button>
-                    <button onClick={() => handleDelete(card._id)} className="btn-delete">Delete</button>
-                  </div>
-                )}
               </div>
-            </div>
-          ))
+            );
+          })
         )}
       </div>
 
@@ -315,9 +354,53 @@ const Cards = () => {
                 placeholder="Wood Type"
               />
               <input
-                type="file"
-                onChange={e => setEditingCard({...editingCard, newImage: e.target.files[0]})}
+                type="number"
+                value={editingCard.discountPercentage}
+                onChange={e => setEditingCard({...editingCard, discountPercentage: e.target.value})}
+                placeholder="Discount % (e.g., 20)"
+                min="0"
+                max="100"
               />
+              <label style={{ fontSize: "14px", fontWeight: "bold" }}>Specifications</label>
+              <input value={editingCard.material} onChange={e => setEditingCard({...editingCard, material: e.target.value})} placeholder="Material" />
+              <input value={editingCard.dimensions} onChange={e => setEditingCard({...editingCard, dimensions: e.target.value})} placeholder="Dimensions" />
+              <input value={editingCard.inTheBox} onChange={e => setEditingCard({...editingCard, inTheBox: e.target.value})} placeholder="In the box" />
+              <input value={editingCard.weight} onChange={e => setEditingCard({...editingCard, weight: e.target.value})} placeholder="Weight" />
+              <input value={editingCard.suitableFor} onChange={e => setEditingCard({...editingCard, suitableFor: e.target.value})} placeholder="Suitable for" />
+              
+              <label style={{ fontSize: "14px", fontWeight: "bold" }}>Detailed Descriptions</label>
+              <textarea value={editingCard.note} onChange={e => setEditingCard({...editingCard, note: e.target.value})} placeholder="Note" />
+              <textarea value={editingCard.disclaimer} onChange={e => setEditingCard({...editingCard, disclaimer: e.target.value})} placeholder="Disclaimer" />
+              <textarea value={editingCard.shippingInfo} onChange={e => setEditingCard({...editingCard, shippingInfo: e.target.value})} placeholder="Shipping info" />
+              
+              <label style={{ fontSize: "14px", fontWeight: "bold" }}>Warranty & Delivery</label>
+              <input value={editingCard.deliveryPrice} onChange={e => setEditingCard({...editingCard, deliveryPrice: e.target.value})} placeholder="Delivery Price" />
+              <textarea value={editingCard.warrantyInfo} onChange={e => setEditingCard({...editingCard, warrantyInfo: e.target.value})} placeholder="Warranty" />
+              <textarea value={editingCard.securePaymentInfo} onChange={e => setEditingCard({...editingCard, securePaymentInfo: e.target.value})} placeholder="Secure payment" />
+              <div className="image-management" style={{ margin: '10px 0' }}>
+                <p style={{ fontSize: '14px', marginBottom: '10px', fontWeight: 'bold' }}>Current Images:</p>
+                <div className="existing-images" style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', marginBottom: '15px' }}>
+                  {editingCard.images && editingCard.images.map((img, idx) => (
+                    <div key={idx} style={{ position: 'relative' }}>
+                      <img src={getImageUrl(img)} alt={`Current ${idx}`} style={{ width: '60px', height: '60px', objectFit: 'cover', borderRadius: '4px' }} />
+                      <button 
+                        type="button" 
+                        onClick={() => removeExistingImage(img)}
+                        style={{ position: 'absolute', top: '-5px', right: '-5px', background: 'red', color: 'white', border: 'none', borderRadius: '50%', width: '18px', height: '18px', cursor: 'pointer', fontSize: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                      >
+                        ×
+                      </button>
+                    </div>
+                  ))}
+                </div>
+                
+                <label style={{ fontSize: '14px', marginBottom: '5px', display: 'block' }}>Add New Images:</label>
+                <input
+                  type="file"
+                  multiple
+                  onChange={e => setEditingCard({...editingCard, newImages: Array.from(e.target.files)})}
+                />
+              </div>
               <div className="edit-actions">
                 <button type="submit" className="btn-save">Save Changes</button>
                 <button type="button" onClick={() => setEditingCard(null)} className="btn-cancel">Cancel</button>
@@ -361,6 +444,141 @@ const Cards = () => {
           </div>
         </div>
       )}
+      {activePopupProduct && (
+        <div className="product-popup-overlay" onClick={() => setActivePopupProduct(null)}>
+          <div className="product-popup-content" onClick={(e) => e.stopPropagation()}>
+            <button className="popup-close-btn" onClick={() => setActivePopupProduct(null)}>×</button>
+            
+            <div className="popup-main-grid">
+              <div className="popup-image-gallery">
+                <ImageSlider images={activePopupProduct.images} getImageUrl={getImageUrl} title={activePopupProduct.title} />
+              </div>
+              
+              <div className="popup-details">
+                <h1 className="popup-title">{activePopupProduct.title}</h1>
+                
+                <div className="popup-price-box">
+                  {activePopupProduct.discountPercentage > 0 ? (
+                    <>
+                      <div className="price-primary">
+                        <span className="current">₹{Math.floor(activePopupProduct.pricePerPiece * (1 - activePopupProduct.discountPercentage / 100))}</span>
+                        <span className="original">₹{activePopupProduct.pricePerPiece}</span>
+                        <span className="discount-tag">{activePopupProduct.discountPercentage}% OFF</span>
+                      </div>
+                      <div className="savings-msg">You Save: ₹{Math.floor(activePopupProduct.pricePerPiece * activePopupProduct.discountPercentage / 100)}</div>
+                    </>
+                  ) : (
+                    <div className="price-primary">
+                      <span className="current">₹{activePopupProduct.pricePerPiece}</span>
+                    </div>
+                  )}
+                </div>
+
+                <div className="quantity-control">
+                  <span className="qty-label">Quantity:</span>
+                  <div className="qty-btns">
+                    <button onClick={() => setCartQuantity(q => Math.max(1, q - 1))}>-</button>
+                    <span>{cartQuantity}</span>
+                    <button onClick={() => setCartQuantity(q => q + 1)}>+</button>
+                  </div>
+                </div>
+
+                <button 
+                  className="popup-order-btn" 
+                  onClick={() => {
+                    setOrderForm(p => ({ ...p, quantity: cartQuantity }));
+                    openOrderModal(activePopupProduct);
+                  }}
+                >
+                  Add To Order / Inquire
+                </button>
+
+                <div className="popup-accordions">
+                  <Accordion title="Product Detail" isOpenDefault={true}>
+                    <div className="accordion-content">
+                      <p><strong>Material:</strong> {activePopupProduct.material}</p>
+                      <p><strong>Dimensions:</strong> {activePopupProduct.dimensions}</p>
+                      <p><strong>Inside The Box:</strong> {activePopupProduct.inTheBox}</p>
+                      <p><strong>Weight:</strong> {activePopupProduct.weight}</p>
+                      <p><strong>Suitable For:</strong> {activePopupProduct.suitableFor}</p>
+                    </div>
+                  </Accordion>
+                  <Accordion title="Detailed Description">
+                    <div className="accordion-content">
+                      <p><strong>Description:</strong> {activePopupProduct.description}</p>
+                      {activePopupProduct.note && <p><strong>Note:</strong> {activePopupProduct.note}</p>}
+                      {activePopupProduct.disclaimer && <p><strong>Disclaimer:</strong> {activePopupProduct.disclaimer}</p>}
+                    </div>
+                  </Accordion>
+                  <Accordion title="Shipping">
+                    <div className="accordion-content">
+                      <p>{activePopupProduct.shippingInfo || "Contact us for worldwide shipping details."}</p>
+                    </div>
+                  </Accordion>
+                  <Accordion title="Warranty & Payments">
+                    <div className="accordion-content">
+                      <p><strong>Delivery Price:</strong> {activePopupProduct.deliveryPrice || "Standard shipping rates apply."}</p>
+                      <p><strong>Warranty:</strong> {activePopupProduct.warrantyInfo}</p>
+                      <p><strong>Secure Payment:</strong> {activePopupProduct.securePaymentInfo || "100% secure payment gateway."}</p>
+                    </div>
+                  </Accordion>
+                </div>
+              </div>
+            </div>
+
+            <div className="popup-recommendations">
+              <h3>You May Also Like</h3>
+              <div className="recommendations-grid">
+                {cards.filter(c => c._id !== activePopupProduct._id).slice(0, 4).map(prod => (
+                  <div key={prod._id} className="rec-item" onClick={() => setActivePopupProduct(prod)}>
+                    <img src={getImageUrl(prod.images[0])} alt={prod.title} />
+                    <p>{prod.title}</p>
+                    <span>₹{prod.pricePerPiece}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+// Sub-components
+const ImageSlider = ({ images, getImageUrl, title }) => {
+  const [index, setIndex] = useState(0);
+  const next = () => setIndex((i) => (i + 1) % images.length);
+  const prev = () => setIndex((i) => (i - 1 + images.length) % images.length);
+
+  if (!images || images.length === 0) return null;
+  return (
+    <div className="image-slider-container">
+      <img src={getImageUrl(images[index])} alt={title} className="full-display-img" />
+      {images.length > 1 && (
+        <>
+          <button className="slider-arrow prev" onClick={prev}>‹</button>
+          <button className="slider-arrow next" onClick={next}>›</button>
+          <div className="slider-dots">
+            {images.map((_, i) => (
+              <span key={i} className={`dot ${i === index ? 'active' : ''}`} onClick={() => setIndex(i)}></span>
+            ))}
+          </div>
+        </>
+      )}
+    </div>
+  );
+};
+
+const Accordion = ({ title, children, isOpenDefault = false }) => {
+  const [isOpen, setIsOpen] = useState(isOpenDefault);
+  return (
+    <div className={`accordion-item ${isOpen ? 'open' : ''}`}>
+      <div className="accordion-header" onClick={() => setIsOpen(!isOpen)}>
+        {title}
+        <span>{isOpen ? '−' : '+'}</span>
+      </div>
+      {isOpen && <div className="accordion-body">{children}</div>}
     </div>
   );
 };

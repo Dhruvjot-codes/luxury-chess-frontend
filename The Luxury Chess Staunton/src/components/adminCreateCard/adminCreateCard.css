@@ -13,6 +13,16 @@
   font-size: 32px;
 }
 
+.form-section-title {
+  text-align: left;
+  font-weight: bold;
+  color: #4542f5;
+  margin-top: 20px;
+  font-size: 1.1rem;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 5px;
+}
+
 .admin-form {
   width: 90%;
   max-width: 600px;

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { offerService, getStoredUser } from "../../services/api";
+import { offerService, getStoredUser, getImageUrl } from "../../services/api";
 import "./offers.css";
 
 const Offers = () => {
@@ -16,8 +16,11 @@ const Offers = () => {
     description: "",
     discountPercentage: "",
     startDate: "",
-    endDate: ""
+    endDate: "",
+    images: []
   });
+
+  const [previews, setPreviews] = useState([]);
 
   const fetchOffers = async () => {
     try {
@@ -38,22 +41,38 @@ const Offers = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  const handleFiles = (e) => {
+    const selectedFiles = Array.from(e.target.files);
+    setFormData({ ...formData, images: selectedFiles });
+    const newPreviews = selectedFiles.map(file => URL.createObjectURL(file));
+    setPreviews(newPreviews);
+  };
+
   const handleCreate = async (e) => {
     e.preventDefault();
     try {
-      const payload = {
-        ...formData,
-        discountPercentage: Number(formData.discountPercentage)
-      };
-      await offerService.create(payload);
+      const data = new FormData();
+      data.append("title", formData.title);
+      data.append("description", formData.description);
+      data.append("discountPercentage", formData.discountPercentage);
+      data.append("startDate", formData.startDate);
+      data.append("endDate", formData.endDate);
+      
+      formData.images.forEach(file => {
+        data.append("files", file);
+      });
+
+      await offerService.create(data);
       alert("Offer created successfully!");
       setFormData({
         title: "",
         description: "",
         discountPercentage: "",
         startDate: "",
-        endDate: ""
+        endDate: "",
+        images: []
       });
+      setPreviews([]);
       fetchOffers();
     } catch (err) {
       alert(err.message || "Failed to create offer");
@@ -91,6 +110,15 @@ const Offers = () => {
               <input type="date" name="startDate" value={formData.startDate} onChange={handleChange} placeholder="Start Date" required />
               <input type="date" name="endDate" value={formData.endDate} onChange={handleChange} placeholder="End Date" required />
             </div>
+            <div style={{ margin: "10px 0", textAlign: "left" }}>
+              <label style={{ fontSize: "14px", color: "#666" }}>Select Offer Images (Optional)</label>
+              <input type="file" onChange={handleFiles} multiple accept="image/*" />
+            </div>
+            {previews.length > 0 && (
+              <div className="preview-row" style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', marginBottom: '10px' }}>
+                {previews.map((src, i) => <img key={i} src={src} style={{ width: '50px', height: '50px', objectFit: 'cover', borderRadius: '4px' }} />)}
+              </div>
+            )}
             <button type="submit" className="btn-create-offer">Publish Offer</button>
           </form>
         </div>
@@ -111,6 +139,11 @@ const Offers = () => {
                 <div className="offer-discount">
                   <span>{offer.discountPercentage}% OFF</span>
                 </div>
+                {offer.images && offer.images.length > 0 && (
+                  <div className="offer-image-container" style={{ margin: '15px' }}>
+                    <img src={getImageUrl(offer.images[0])} alt={offer.title} style={{ width: '100%', height: '150px', objectFit: 'cover', borderRadius: '8px' }} />
+                  </div>
+                )}
                 <div className="offer-content">
                   <h3>{offer.title}</h3>
                   <p className="offer-desc">{offer.description}</p>
