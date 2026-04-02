@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "./header.css";
-import logo from "../../assets/logo.jpeg";
+// import logo from "../../assets/logo.jpeg";
+const logo = "/logo.svg";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { getAuthToken, getStoredUser, authService } from "../../services/api";
 import ProfileDropdown from "../profile/ProfileDropdown";
