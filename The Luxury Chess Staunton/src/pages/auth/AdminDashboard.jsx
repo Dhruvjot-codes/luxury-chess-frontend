@@ -2,13 +2,14 @@ import React, { useEffect, useState } from "react";
 import { adminService, getStoredUser } from "../../services/api";
 import { useNavigate } from "react-router-dom";
 import OrderManagement from "../admin/OrderManagement";
+import ProductManagement from "../admin/ProductManagement";
 import "./auth.css";
 
 const AdminDashboard = () => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [activeTab, setActiveTab] = useState("users");
+  const [activeTab, setActiveTab] = useState("products");
   const navigate = useNavigate();
 
   const currentUser = getStoredUser();
@@ -58,7 +59,7 @@ const AdminDashboard = () => {
     }
   };
 
-  if (loading) return <div className="auth-page"><div className="auth-card">Loading administration panel...</div></div>;
+  if (loading && activeTab === "users") return <div className="auth-page"><div className="auth-card">Loading administration panel...</div></div>;
 
   return (
     <div className="admin-dashboard">
@@ -68,6 +69,12 @@ const AdminDashboard = () => {
       </div>
 
       <div className="dashboard-tabs">
+        <button 
+          className={`tab-btn ${activeTab === "products" ? "active" : ""}`}
+          onClick={() => setActiveTab("products")}
+        >
+          Product Management
+        </button>
         <button 
           className={`tab-btn ${activeTab === "users" ? "active" : ""}`}
           onClick={() => setActiveTab("users")}
@@ -85,6 +92,12 @@ const AdminDashboard = () => {
       {error && <div className="error-message">{error}</div>}
 
       <div className="dashboard-content">
+        {activeTab === "products" && (
+          <div className="products-section">
+            <ProductManagement />
+          </div>
+        )}
+
         {activeTab === "users" && (
           <div className="users-section">
             <h2>User Management</h2>

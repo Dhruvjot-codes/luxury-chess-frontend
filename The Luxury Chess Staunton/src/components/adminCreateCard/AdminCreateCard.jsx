@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import "./adminCreateCard.css";
 import { cardService } from "../../services/api";
 
-const AdminCreateCard = () => {
+const AdminCreateCard = (props) => {
 
   const [formData, setFormData] = useState({
     title: "",
@@ -82,6 +82,11 @@ const AdminCreateCard = () => {
 
       const res = await cardService.create(data);
       alert("Product Created Successfully with " + formData.images.length + " images!");
+      
+      if (typeof props.onSuccess === 'function') {
+        props.onSuccess();
+      }
+
       setFormData({
         title: "",
         description: "",
