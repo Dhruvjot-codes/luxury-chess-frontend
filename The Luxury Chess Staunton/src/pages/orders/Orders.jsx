@@ -172,8 +172,7 @@ const Orders = () => {
                       <p><strong>Date:</strong> {new Date(req.createdAt).toLocaleDateString()}</p>
                     </div>
                     <div className="order-actions">
-                      <button className="btn-accept" onClick={() => handleAccept(req._id)}>Accept</button>
-                      <button className="btn-reject" onClick={() => handleReject(req._id)}>Reject</button>
+                      <button className="btn-accept" onClick={() => handleAccept(req._id)}>Accept Order</button>
                     </div>
                   </div>
                 ))}

@@ -8,10 +8,12 @@ const Cards = () => {
   const [error, setError] = useState("");
   const [editingCard, setEditingCard] = useState(null);
   const [orderingCard, setOrderingCard] = useState(null);
-  const [orderForm, setOrderForm] = useState({ quantity: 1, notes: "" });
+  const [orderForm, setOrderForm] = useState({ cardId: null, quantity: 1, notes: "" });
+  const [orderSuccess, setOrderSuccess] = useState(null); // cardId of successfull order
   const [searchTerm, setSearchTerm] = useState("");
   const [wishlist, setWishlist] = useState([]);
   const [activePopupProduct, setActivePopupProduct] = useState(null);
+  const [popupOrderSuccess, setPopupOrderSuccess] = useState(false);
   const [cartQuantity, setCartQuantity] = useState(1);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   
@@ -26,6 +28,23 @@ const Cards = () => {
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
+
+  const handleDirectOrder = async (card, quantity) => {
+    if (!user) {
+      alert("Please log in to place an order.");
+      return;
+    }
+    try {
+      await orderService.createRequest(card._id, quantity, "Quick order from products page");
+      setOrderSuccess(card._id);
+      setTimeout(() => {
+        setOrderSuccess(null);
+        setOrderForm({ cardId: null, quantity: 1, notes: "" });
+      }, 3000);
+    } catch (err) {
+      alert(err.message || "Failed to place order.");
+    }
+  };
 
   useEffect(() => {
     if (activePopupProduct) {
@@ -113,11 +132,29 @@ const Cards = () => {
     if (!orderingCard) return;
     try {
       await orderService.createRequest(orderingCard._id, orderForm.quantity, orderForm.notes);
-      alert("Added to an order! It will take 24 hours to approve. We will meet as soon as possible, thanks for waiting and your precious time!");
-      setOrderingCard(null);
-      setOrderForm({ quantity: 1, notes: "" });
+      
+      setOrderSuccess(orderingCard._id);
+      
+      // Keep it open for 3 seconds then clear
+      setTimeout(() => {
+        setOrderSuccess(null);
+        setOrderingCard(null);
+        setOrderForm({ quantity: 1, notes: "" });
+      }, 3000);
+
     } catch (err) {
       alert(err.message || "Failed to order. Make sure you are logged in.");
+    }
+  };
+
+  const handlePopupOrder = async () => {
+    if (!activePopupProduct) return;
+    try {
+      await orderService.createRequest(activePopupProduct._id, cartQuantity, "Order from product detail popup");
+      setPopupOrderSuccess(true);
+      setTimeout(() => setPopupOrderSuccess(false), 4000);
+    } catch (err) {
+      alert("Please log in to place an order.");
     }
   };
 
@@ -255,18 +292,28 @@ const Cards = () => {
         ) : (
           displayedCards.map(card => {
             const discountedPrice = card.pricePerPiece * (1 - (card.discountPercentage || 0) / 100);
+            const cardId = card._id;
+            const currentQty = orderForm.cardId === cardId ? orderForm.quantity : 1;
 
             return (
               <div 
                 key={card._id} 
-                className="card-item"
-                onMouseEnter={() => !isMobile && setActivePopupProduct(card)}
-                onClick={() => setActivePopupProduct(card)}
+                className={`card-item ${orderSuccess === cardId ? 'order-success' : ''}`}
               >
+                {/* SUCCESS OVERLAY */}
+                {orderSuccess === cardId && (
+                  <div className="order-success-card-overlay">
+                    <div className="success-icon">✓</div>
+                    <h3>CONFIRMED!</h3>
+                    <p>Successfully added</p>
+                  </div>
+                )}
+
                 {card.images && card.images.length > 0 && (
-                  <div className="card-img-container">
-                    <div className="main-img-wrapper" style={{ position: 'relative' }}>
+                  <div className="card-img-container" onClick={() => setActivePopupProduct(card)}>
+                    <div className="main-img-wrapper" style={{ position: 'relative', height: '100%' }}>
                       <img src={getImageUrl(card.images[0])} alt={card.title} className="card-img" />
+                      <div className="view-details-overlay">View Details</div>
                       {(card.discountPercentage || 0) > 0 && (
                         <div className="discount-badge-grid">
                           {card.discountPercentage}% OFF
@@ -275,9 +322,9 @@ const Cards = () => {
                     </div>
                   </div>
                 )}
-                <div className="card-content" onClick={(e) => e.stopPropagation()}>
+                <div className="card-content">
                   <div className="card-header">
-                    <h3>{card.title}</h3>
+                    <h3 onClick={() => setActivePopupProduct(card)} style={{ cursor: 'pointer' }}>{card.title}</h3>
                     <button 
                       className="wishlist-btn"
                       onClick={(e) => { e.stopPropagation(); toggleWishlist(card._id); }}
@@ -302,8 +349,55 @@ const Cards = () => {
                     {card.woodType && <span>Wood: {card.woodType}</span>}
                   </div>
 
+                  {/* DIRECT ORDER ACTION */}
+                  <div className="card-action-bar" style={{ marginTop: '20px', display: 'flex', gap: '10px' }}>
+                     <div className="qty-selector-small" style={{ display: 'flex', alignItems: 'center', background: '#f1f5f9', borderRadius: '10px', padding: '4px' }}>
+                        <button 
+                          style={{ border: 'none', background: 'white', width: '28px', height: '28px', borderRadius: '6px', cursor: 'pointer', fontWeight: 'bold' }}
+                          onClick={(e) => { e.stopPropagation(); setOrderForm({ cardId: card._id, quantity: Math.max(1, currentQty - 1) }) }}
+                        >
+                          -
+                        </button>
+                        <span style={{ padding: '0 12px', fontWeight: 'bold', fontSize: '0.9rem' }}>{currentQty}</span>
+                        <button 
+                          style={{ border: 'none', background: 'white', width: '28px', height: '28px', borderRadius: '6px', cursor: 'pointer', fontWeight: 'bold' }}
+                          onClick={(e) => { e.stopPropagation(); setOrderForm({ cardId: card._id, quantity: currentQty + 1 }) }}
+                        >
+                          +
+                        </button>
+                     </div>
+                     <button 
+                       className="btn-direct-order"
+                       style={{ 
+                         flex: 1, 
+                         background: '#2563eb', 
+                         color: 'white', 
+                         border: 'none', 
+                         borderRadius: '10px', 
+                         fontWeight: '800', 
+                         fontSize: '0.85rem',
+                         cursor: 'pointer',
+                         transition: '0.3s'
+                       }}
+                       onClick={(e) => {
+                         e.stopPropagation();
+                         const finalQty = currentQty;
+                         setOrderingCard(card);
+                         // Trigger actual order logic
+                         const mockEvent = { preventDefault: () => {} };
+                         // We need to ensure handleOrderSubmit uses the right data
+                         // I'll update handleOrderSubmit to take parameters optionally
+                         handleDirectOrder(card, finalQty);
+                       }}
+                       onMouseOver={(e) => e.target.style.background = '#1d4ed8'}
+                       onMouseOut={(e) => e.target.style.background = '#2563eb'}
+                     >
+                       Confirm Order
+                     </button>
+                  </div>
+
                   {isAdmin && (
-                    <div className="admin-actions">
+                    <div className="admin-actions" style={{ marginTop: '15px', borderTop: '1px solid #f1f5f9', paddingTop: '10px' }}>
                       <button onClick={(e) => { e.stopPropagation(); startEditing(card); }} className="btn-edit">Edit</button>
                       <button onClick={(e) => { e.stopPropagation(); handleDelete(card._id); }} className="btn-delete">Delete</button>
                     </div>
@@ -414,33 +508,43 @@ const Cards = () => {
         <div className="edit-modal-backdrop">
           <div className="edit-modal">
             <h2 style={{ marginBottom: "20px" }}>Order {orderingCard.title}</h2>
-            <form onSubmit={handleOrderSubmit} className="edit-form">
-              <label style={{ fontWeight: "bold", color: "#333" }}>Quantity Required</label>
-              <input
-                type="number"
-                value={orderForm.quantity}
-                onChange={e => setOrderForm({...orderForm, quantity: Math.max(1, parseInt(e.target.value) || 1)})}
-                min="1"
-                style={{ padding: "10px", borderRadius: "5px", border: "1px solid #ccc", marginBottom: "15px" }}
-                required
-              />
-              
-              <label style={{ fontWeight: "bold", color: "#333" }}>Any other preferred product / Special Instructions (Optional)</label>
-              <textarea
-                value={orderForm.notes}
-                onChange={e => setOrderForm({...orderForm, notes: e.target.value})}
-                placeholder="Tell us any specific requirements or distinct products you'd prefer..."
-                rows="4"
-                style={{ padding: "10px", borderRadius: "5px", border: "1px solid #ccc" }}
-              />
-              
-              <div className="edit-actions" style={{ marginTop: "20px" }}>
-                <button type="submit" className="btn-save" style={{ background: "#2ecc71", transition: "0.2s" }} onMouseOver={(e) => e.target.style.background = "#27ae60"} onMouseOut={(e) => e.target.style.background = "#2ecc71"}>
-                  Confirm Request
-                </button>
-                <button type="button" onClick={() => setOrderingCard(null)} className="btn-cancel">Cancel</button>
+            
+            {orderSuccess === orderingCard._id ? (
+              <div className="order-success-overlay-inline">
+                <div className="success-icon">✓</div>
+                <h3>CONfIRMED!</h3>
+                <p>Order request placed successfully.</p>
+                <p className="sub-hint">We'll review it within 24 hours.</p>
               </div>
-            </form>
+            ) : (
+              <form onSubmit={handleOrderSubmit} className="edit-form">
+                <label style={{ fontWeight: "bold", color: "#333" }}>Quantity Required</label>
+                <input
+                  type="number"
+                  value={orderForm.quantity}
+                  onChange={e => setOrderForm({...orderForm, quantity: Math.max(1, parseInt(e.target.value) || 1)})}
+                  min="1"
+                  style={{ padding: "10px", borderRadius: "5px", border: "1px solid #ccc", marginBottom: "15px" }}
+                  required
+                />
+                
+                <label style={{ fontWeight: "bold", color: "#333" }}>Any other preferred product / Special Instructions (Optional)</label>
+                <textarea
+                  value={orderForm.notes}
+                  onChange={e => setOrderForm({...orderForm, notes: e.target.value})}
+                  placeholder="Tell us any specific requirements or distinct products you'd prefer..."
+                  rows="4"
+                  style={{ padding: "10px", borderRadius: "5px", border: "1px solid #ccc" }}
+                />
+                
+                <div className="edit-actions" style={{ marginTop: "20px" }}>
+                  <button type="submit" className="btn-save" style={{ background: "#2563eb", transition: "0.2s" }} onMouseOver={(e) => e.target.style.background = "#1d4ed8"} onMouseOut={(e) => e.target.style.background = "#2563eb"}>
+                    Confirm Request
+                  </button>
+                  <button type="button" onClick={() => setOrderingCard(null)} className="btn-cancel">Cancel</button>
+                </div>
+              </form>
+            )}
           </div>
         </div>
       )}
@@ -483,15 +587,20 @@ const Cards = () => {
                   </div>
                 </div>
 
-                <button 
-                  className="popup-order-btn" 
-                  onClick={() => {
-                    setOrderForm(p => ({ ...p, quantity: cartQuantity }));
-                    openOrderModal(activePopupProduct);
-                  }}
-                >
-                  Add To Order / Inquire
-                </button>
+                {popupOrderSuccess ? (
+                  <div className="order-success-overlay-inline" style={{ margin: "20px 0" }}>
+                    <div className="success-icon" style={{ fontSize: "2rem" }}>✓</div>
+                    <h3>CONFIRMED!</h3>
+                    <p style={{ fontSize: "0.9rem" }}>Successfully added to your orders.</p>
+                  </div>
+                ) : (
+                  <button 
+                    className="popup-order-btn" 
+                    onClick={handlePopupOrder}
+                  >
+                    Add To Order / Inquire
+                  </button>
+                )}
 
                 <div className="popup-accordions">
                   <Accordion title="Product Detail" isOpenDefault={true}>
@@ -548,12 +657,28 @@ const Cards = () => {
 // Sub-components
 const ImageSlider = ({ images, getImageUrl, title }) => {
   const [index, setIndex] = useState(0);
+  const [touchStart, setTouchStart] = useState(0);
+  const [touchEnd, setTouchEnd] = useState(0);
+
   const next = () => setIndex((i) => (i + 1) % images.length);
   const prev = () => setIndex((i) => (i - 1 + images.length) % images.length);
 
+  const handleTouchStart = (e) => setTouchStart(e.targetTouches[0].clientX);
+  const handleTouchMove = (e) => setTouchEnd(e.targetTouches[0].clientX);
+
+  const handleTouchEnd = () => {
+    if (touchStart - touchEnd > 75) next();
+    if (touchStart - touchEnd < -75) prev();
+  };
+
   if (!images || images.length === 0) return null;
   return (
-    <div className="image-slider-container">
+    <div 
+      className="image-slider-container"
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
+    >
       <img src={getImageUrl(images[index])} alt={title} className="full-display-img" />
       {images.length > 1 && (
         <>

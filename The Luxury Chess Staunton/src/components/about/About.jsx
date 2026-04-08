@@ -1,16 +1,38 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import "./About.css";
 import horseImage from "../../assets/horse 2.jpeg";
+import horseImage2 from "../../assets/horse.jpeg";
+import { getImageUrl, settingsService } from "../../services/api";
 
 const About = () => {
+  const [images, setImages] = useState([horseImage, horseImage2]);
+
+  useEffect(() => {
+    const fetchImages = async () => {
+      try {
+        const data = await settingsService.getSection('about');
+        if (data && data.value && data.value.length > 0) {
+          setImages(data.value);
+        }
+      } catch (err) {
+        console.log("Using static about images");
+      }
+    };
+    fetchImages();
+  }, []);
+
   return (
     <section id="about" className="about">
 
       <div className="about-container">
 
-        {/* LEFT IMAGE */}
-        <div className="about-image">
-          <img src={horseImage} alt="Handcrafted Chess Piece" />
+        {/* LEFT IMAGE STACK */}
+        <div className="about-image luxury-shape-stack">
+           <div className="shape-blur-glow"></div>
+           <div className="image-stack">
+              <img src={getImageUrl(images[0]) || horseImage} alt="Handcrafted Chess Piece 1" className="stack-img top" />
+              <img src={getImageUrl(images[1]) || horseImage2} alt="Handcrafted Chess Piece 2" className="stack-img bottom" />
+           </div>
         </div>
 
         {/* RIGHT TEXT */}

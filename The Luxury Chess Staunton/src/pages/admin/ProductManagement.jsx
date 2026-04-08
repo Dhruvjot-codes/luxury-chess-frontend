@@ -88,9 +88,9 @@ const ProductManagement = () => {
         <h2>Product Management</h2>
         <button 
           onClick={() => setShowCreateForm(!showCreateForm)}
-          style={{ padding: "10px 20px", background: "#4542f5", color: "white", border: "none", borderRadius: "5px", cursor: "pointer" }}
+          style={{ padding: "12px 24px", background: "#2563eb", color: "white", border: "none", borderRadius: "12px", cursor: "pointer", fontWeight: "800" }}
         >
-          {showCreateForm ? "Close Form" : "Add New Product"}
+          {showCreateForm ? "Close Form" : "+ Add New Product"}
         </button>
       </div>
 

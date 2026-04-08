@@ -99,17 +99,12 @@ const Login = () => {
             {loading ? "Logging in..." : "Log in"}
           </button>
         </form>
-        <p className="auth-subtitle" style={{ marginTop: "12px" }}>
-          <Link to="/forgot-password" style={{ color: "#38bdf8", textDecoration: "none" }}>
-            Forgot password?
-          </Link>
-        </p>
-        <p className="auth-subtitle" style={{ marginTop: "12px" }}>
-          Don&apos;t have an account yet?{" "}
-          <Link to="/register" style={{ color: "#38bdf8", textDecoration: "none" }}>
-            Register
-          </Link>
-        </p>
+        <div className="auth-footer">
+          <Link to="/forgot-password">Forgot password?</Link>
+          <p>
+            Don't have an account yet? <Link to="/register">Register</Link>
+          </p>
+        </div>
       </div>
     </div>
   );

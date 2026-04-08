@@ -3,6 +3,7 @@ import { adminService, getStoredUser } from "../../services/api";
 import { useNavigate } from "react-router-dom";
 import OrderManagement from "../admin/OrderManagement";
 import ProductManagement from "../admin/ProductManagement";
+import LayoutManagement from "../admin/LayoutManagement";
 import "./auth.css";
 
 const AdminDashboard = () => {
@@ -87,6 +88,12 @@ const AdminDashboard = () => {
         >
           Order Management
         </button>
+        <button 
+          className={`tab-btn ${activeTab === "layout" ? "active" : ""}`}
+          onClick={() => setActiveTab("layout")}
+        >
+          Site Appearance
+        </button>
       </div>
 
       {error && <div className="error-message">{error}</div>}
@@ -146,6 +153,12 @@ const AdminDashboard = () => {
         {activeTab === "orders" && (
           <div className="orders-section">
             <OrderManagement />
+          </div>
+        )}
+
+        {activeTab === "layout" && (
+          <div className="layout-section">
+            <LayoutManagement />
           </div>
         )}
       </div>

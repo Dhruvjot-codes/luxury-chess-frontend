@@ -6,14 +6,14 @@
   --header-bg: rgba(255, 255, 255, 0.95);
   --header-text: #0f172a;
   --header-link: #334155;
-  --header-link-hover: #4542f5; /* New Blue */
+  --header-link-hover: #2563eb;
   --header-border: #e2e8f0;
   --card-bg: #ffffff;
   --card-border: #e2e8f0;
   --input-bg: #f1f5f9;
   --input-text: #0f172a;
-  --primary-color: #4542f5;
-  --accent-color: #3b39d1;
+  --primary-color: #2563eb;
+  --accent-color: #1d4ed8;
 }
 
 [data-theme="dark"] {
@@ -24,14 +24,14 @@
   --header-bg: rgba(26, 26, 46, 0.9);
   --header-text: #f8fafc;
   --header-link: #cbd5e1;
-  --header-link-hover: #4542f5;
-  --header-border: rgba(69, 66, 245, 0.2);
+  --header-link-hover: #2563eb;
+  --header-border: rgba(37, 99, 235, 0.2);
   --card-bg: #16213e;
   --card-border: rgba(255, 255, 255, 0.1);
   --input-bg: #0f3460;
   --input-text: #f1f5f9;
-  --primary-color: #4542f5;
-  --accent-color: #3b39d1;
+  --primary-color: #2563eb;
+  --accent-color: #1d4ed8;
 }
 
 [data-theme="vintage"] {
@@ -87,4 +87,60 @@ main {
 
 ::-webkit-scrollbar-thumb:hover {
   background: var(--primary-color);
+}
+
+/* Structural Layout Fix */
+.content-with-sidebar {
+  min-height: 100vh;
+  width: 100%;
+  box-sizing: border-box;
+  padding-top: 120px; /* Header Height Clearance */
+  overflow-x: hidden; /* Prevent horizontal shifts */
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+}
+
+@media (min-width: 1024px) {
+  .content-with-sidebar {
+    margin-left: 260px; /* Width of the sidebar */
+    width: calc(100% - 260px);
+  }
+
+  .content-with-sidebar.full-width {
+    margin-left: 0;
+    width: 100% !important;
+  }
+
+  .content-with-sidebar.auth-layout {
+    padding-top: 0; /* Let the page handle its own layout */
+    height: 100vh;
+    overflow: hidden; /* Prevent nested scrolling */
+  }
+}
+
+.content-with-sidebar.auth-layout {
+  padding-top: 0;
+  height: 100vh;
+}
+
+@media (max-width: 1024px) {
+  .content-with-sidebar {
+    margin-left: 0 !important;
+    width: 100% !important;
+    padding-top: 120px !important;
+  }
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideInRight {
+  from { transform: translateX(30px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
 }

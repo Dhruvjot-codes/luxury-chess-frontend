@@ -287,6 +287,28 @@ export const adminService = {
   },
 };
 
+// Settings Services
+export const settingsService = {
+  getAll: async () => {
+    return await apiCall('/api/settings', {
+      method: 'GET',
+    });
+  },
+
+  getSection: async (section) => {
+    return await apiCall(`/api/settings/${section}`, {
+      method: 'GET',
+    });
+  },
+
+  updateSection: async (section, formData) => {
+    return await apiCall(`/api/settings/${section}`, {
+      method: 'POST',
+      body: formData,
+    });
+  },
+};
+
 // Helper exports
 export const getAuthToken = () => localStorage.getItem('authToken');
 export const getStoredUser = () => {

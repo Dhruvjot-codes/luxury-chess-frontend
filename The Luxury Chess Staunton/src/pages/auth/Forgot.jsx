@@ -53,12 +53,11 @@ const Forgot = () => {
             {loading ? "Sending..." : "Send link"}
           </button>
         </form>
-        <p className="auth-subtitle" style={{ marginTop: "12px" }}>
-          Remembered your password?{" "}
-          <Link to="/login" style={{ color: "#38bdf8", textDecoration: "none" }}>
-            Log in
-          </Link>
-        </p>
+        <div className="auth-footer">
+          <p>
+            Remembered your password? <Link to="/login">Log in</Link>
+          </p>
+        </div>
       </div>
     </div>
   );
