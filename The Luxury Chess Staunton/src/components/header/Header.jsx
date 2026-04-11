@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from "react";
 import "./header.css";
 const logo = "/logo.svg";
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { getAuthToken, getStoredUser } from "../../services/api";
 import ProfileDropdown from "../profile/ProfileDropdown";
-import Sidebar from "../sidebar/Sidebar";
 
 const Header = ({ toggleSidebar, isSidebarOpen }) => {
   const [user, setUser] = useState(null);
@@ -87,7 +86,6 @@ const Header = ({ toggleSidebar, isSidebarOpen }) => {
           </div>
         </div>
       </header>
-      <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
     </>
   );
 };

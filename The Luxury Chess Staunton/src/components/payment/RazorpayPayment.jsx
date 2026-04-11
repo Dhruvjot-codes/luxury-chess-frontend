@@ -72,13 +72,26 @@ const RazorpayPayment = ({ order, onPaymentSuccess, onPaymentError }) => {
     }
   };
 
+  const totalAmount = order.totalAmount || 0;
+  const itemPrice = order.items?.[0]?.pricePerPiece || 0;
+  const quantity = order.items?.[0]?.quantity || 1;
+  const originalPrice = itemPrice * quantity;
+  const discountAmount = originalPrice > totalAmount ? originalPrice - totalAmount : 0;
+
   return (
     <div className="razorpay-payment">
       <div className="payment-summary">
         <h3>Payment Summary</h3>
         <div className="payment-details">
-          <p><strong>Order ID:</strong> {order._id}</p>
-          <p><strong>Total Amount:</strong> ₹{order.totalAmount}</p>
+          <p><strong>Order ID:</strong> {order._id.slice(-8)}</p>
+          <p><strong>Tracking:</strong> {order.trackingNumber || 'N/A'}</p>
+          {discountAmount > 0 && (
+            <>
+              <p><strong>Original Price:</strong> <span style={{textDecoration: 'line-through'}}>₹{originalPrice}</span></p>
+              <p style={{color: '#10b981'}}><strong>You Save:</strong> ₹{discountAmount}</p>
+            </>
+          )}
+          <p><strong>Final Amount:</strong> ₹{totalAmount}</p>
           <p><strong>Items:</strong> {order.items?.length || 0}</p>
         </div>
       </div>
@@ -88,12 +101,12 @@ const RazorpayPayment = ({ order, onPaymentSuccess, onPaymentError }) => {
         onClick={handlePayment}
         disabled={loading}
       >
-        {loading ? 'Processing...' : `Pay ₹${order.totalAmount}`}
+        {loading ? 'Processing...' : `Pay ₹${totalAmount}`}
       </button>
       
       <div className="payment-info">
-        <p>Secure payment powered by Razorpay</p>
-        <p>Your payment information is encrypted and secure</p>
+        <p>✓ Secure payment powered by Razorpay</p>
+        <p>✓ Your payment information is encrypted and secure</p>
       </div>
     </div>
   );

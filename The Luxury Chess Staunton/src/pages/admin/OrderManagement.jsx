@@ -47,6 +47,22 @@ const OrderManagement = () => {
     }
   };
 
+  const handleCancelOrder = async (orderId) => {
+    if (!window.confirm('Confirm cancellation of this order?')) return;
+    try {
+      setUpdatingStatus(true);
+      await orderService.cancelAdminOrder(orderId);
+      await fetchOrders();
+      if (selectedOrder?._id === orderId) {
+        setSelectedOrder(null);
+      }
+    } catch (err) {
+      setError(err.message || 'Failed to cancel order');
+    } finally {
+      setUpdatingStatus(false);
+    }
+  };
+
   const getStatusColor = (status) => {
     const colors = {
       pending: '#ffc107',
@@ -152,6 +168,16 @@ const OrderManagement = () => {
                       disabled={updatingStatus}
                     >
                       Process Order
+                    </button>
+                  )}
+
+                  {order.status !== 'delivered' && order.status !== 'cancelled' && (
+                    <button
+                      className="status-btn cancelled"
+                      onClick={() => handleCancelOrder(order._id)}
+                      disabled={updatingStatus}
+                    >
+                      Cancel Order
                     </button>
                   )}
                   
@@ -267,6 +293,18 @@ const OrderManagement = () => {
                     disabled={updatingStatus}
                   >
                     Process Order
+                  </button>
+                )}
+                {selectedOrder.status !== 'delivered' && selectedOrder.status !== 'cancelled' && (
+                  <button 
+                    className="status-btn cancelled"
+                    onClick={() => {
+                      handleCancelOrder(selectedOrder._id);
+                      setSelectedOrder(null);
+                    }}
+                    disabled={updatingStatus}
+                  >
+                    Cancel Order
                   </button>
                 )}
                 

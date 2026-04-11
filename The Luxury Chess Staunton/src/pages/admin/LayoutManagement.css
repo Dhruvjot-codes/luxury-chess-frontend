@@ -99,6 +99,119 @@
   animation: slideUp 0.3s ease;
 }
 
+/* Mobile and Tablet Responsive - Layout Management */
+@media (max-width: 1024px) {
+  .layout-management {
+    padding: 16px;
+  }
+  
+  .layout-management h2 {
+    font-size: 1.5rem;
+    margin-bottom: 8px;
+  }
+  
+  .helper-text {
+    font-size: 0.95rem;
+    margin-bottom: 30px;
+  }
+  
+  .upload-grid {
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+  }
+  
+  .upload-card {
+    padding: 30px 20px;
+  }
+  
+  .upload-card h3 {
+    font-size: 1.2rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .layout-management {
+    padding: 12px;
+  }
+  
+  .layout-management h2 {
+    font-size: 1.3rem;
+    margin-bottom: 6px;
+  }
+  
+  .helper-text {
+    font-size: 0.9rem;
+    margin-bottom: 24px;
+  }
+  
+  .upload-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  
+  .upload-card {
+    padding: 24px 16px;
+    border-radius: 16px;
+  }
+  
+  .upload-card h3 {
+    font-size: 1.1rem;
+    margin-bottom: 12px;
+  }
+  
+  .upload-card p {
+    font-size: 0.9rem;
+    margin-bottom: 20px;
+  }
+  
+  .card-icon {
+    font-size: 2.5rem;
+    margin-bottom: 16px;
+  }
+}
+
+@media (max-width: 640px) {
+  .layout-management {
+    padding: 10px;
+  }
+  
+  .layout-management h2 {
+    font-size: 1.1rem;
+  }
+  
+  .helper-text {
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+  }
+  
+  .upload-grid {
+    gap: 12px;
+  }
+  
+  .upload-card {
+    padding: 16px 12px;
+    border-radius: 12px;
+  }
+  
+  .upload-card h3 {
+    font-size: 1rem;
+  }
+  
+  .upload-card p {
+    font-size: 0.8rem;
+  }
+  
+  .custom-file-btn {
+    padding: 12px;
+    font-size: 0.8rem;
+  }
+  
+  .status-msg {
+    margin-top: 24px;
+    font-size: 0.85rem;
+  }
+}
+
 .status-msg.success {
   background: #f0fdf4;
   color: #16a34a;

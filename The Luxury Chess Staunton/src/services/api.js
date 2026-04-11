@@ -153,6 +153,12 @@ export const cardService = {
       body: data,
     });
   },
+
+  getById: async (id) => {
+    return await apiCall(`/api/cards/${id}`, {
+      method: 'GET',
+    });
+  },
 };
 
 // Payment Services
@@ -226,6 +232,18 @@ export const orderService = {
 
   rejectAdmin: async (id) => {
     return await apiCall(`/api/orders/admin/${id}/reject`, {
+      method: 'POST',
+    });
+  },
+
+  cancelAdminOrder: async (id) => {
+    return await apiCall(`/api/orders/admin/${id}/cancel`, {
+      method: 'POST',
+    });
+  },
+
+  cancelOrder: async (id) => {
+    return await apiCall(`/api/orders/${id}/cancel`, {
       method: 'POST',
     });
   },

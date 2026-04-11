@@ -144,7 +144,7 @@ const AdminCreateCard = (props) => {
         <input
           type="number"
           name="pricePerPiece"
-          placeholder="Price"
+          placeholder="Price per piece (₹)"
           value={formData.pricePerPiece}
           onChange={handleChange}
           required
@@ -153,7 +153,7 @@ const AdminCreateCard = (props) => {
         <input
           type="number"
           name="pieceCount"
-          placeholder="Total Pieces"
+          placeholder="Stock available"
           value={formData.pieceCount}
           onChange={handleChange}
           required

@@ -1,8 +1,11 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { cardService, orderService, getStoredUser, getImageUrl } from "../../services/api";
 import "./cards.css";
+import { FaShoppingCart, FaHeart, FaEye, FaBox, FaChevronLeft, FaChevronRight } from "react-icons/fa";
 
 const Cards = () => {
+  const navigate = useNavigate();
   const [cards, setCards] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -243,10 +246,15 @@ const Cards = () => {
     return matchesSearch;
   });
 
-  // Limit number of items on mobile as requested
-  const displayedCards = (isMobile && !searchTerm) 
-    ? filteredCards.slice(0, Math.ceil(filteredCards.length / 2)) 
-    : filteredCards;
+  const displayedCards = filteredCards;
+
+  const normalizeImages = (images) => {
+    if (!images) return [];
+    if (Array.isArray(images)) return images.filter(Boolean);
+    return [images];
+  };
+
+  const popupImages = normalizeImages(activePopupProduct?.images);
 
   return (
     <div className="cards-page">
@@ -299,6 +307,7 @@ const Cards = () => {
               <div 
                 key={card._id} 
                 className={`card-item ${orderSuccess === cardId ? 'order-success' : ''}`}
+                onClick={() => navigate(`/products/${card._id}`)}
               >
                 {/* SUCCESS OVERLAY */}
                 {orderSuccess === cardId && (
@@ -310,26 +319,42 @@ const Cards = () => {
                 )}
 
                 {card.images && card.images.length > 0 && (
-                  <div className="card-img-container" onClick={() => setActivePopupProduct(card)}>
-                    <div className="main-img-wrapper" style={{ position: 'relative', height: '100%' }}>
+                  <div className="card-img-container">
+                    <div className="main-img-wrapper">
                       <img src={getImageUrl(card.images[0])} alt={card.title} className="card-img" />
-                      <div className="view-details-overlay">View Details</div>
+                      <div className="view-details-overlay">
+                        <FaEye size={20} />
+                        <span>View Details</span>
+                      </div>
                       {(card.discountPercentage || 0) > 0 && (
                         <div className="discount-badge-grid">
                           {card.discountPercentage}% OFF
                         </div>
                       )}
+
+                      <div className="stock-indicator">
+                        <div className="stock-top">
+                          <span>Stock</span>
+                          <span>{card.pieceCount}</span>
+                        </div>
+                        <div className="stock-bar">
+                          <div
+                            className="stock-fill"
+                            style={{ width: `${Math.min(100, (card.pieceCount / 50) * 100)}%` }}
+                          />
+                        </div>
+                      </div>
                     </div>
                   </div>
                 )}
                 <div className="card-content">
                   <div className="card-header">
-                    <h3 onClick={() => setActivePopupProduct(card)} style={{ cursor: 'pointer' }}>{card.title}</h3>
+                    <h3 className="card-title">{card.title}</h3>
                     <button 
                       className="wishlist-btn"
                       onClick={(e) => { e.stopPropagation(); toggleWishlist(card._id); }}
                     >
-                      {isInWishlist(card._id) ? '❤️' : '🤍'}
+                      {isInWishlist(card._id) ? <FaHeart size={18} fill="#ef4444" color="#ef4444" /> : <FaHeart size={18} color="#94a3b8" />}
                     </button>
                   </div>
                   
@@ -344,60 +369,44 @@ const Cards = () => {
                     )}
                   </div>
 
-                  <div className="card-details">
-                    <span>Pieces: {card.pieceCount}</span>
-                    {card.woodType && <span>Wood: {card.woodType}</span>}
+                  <div className="card-total">Total: ₹{Math.floor(discountedPrice * currentQty)}</div>
+
+                  <div className="card-details-row">
+                    <span className="detail-pill"><FaBox size={12} /> Stock {card.pieceCount}</span>
+                    {card.woodType && <span className="detail-pill">{card.woodType}</span>}
                   </div>
+                  
+                  <p className="card-description">{card.description?.substring(0, 60)}{card.description?.length > 60 ? '...' : ''}</p>
 
                   {/* DIRECT ORDER ACTION */}
-                  <div className="card-action-bar" style={{ marginTop: '20px', display: 'flex', gap: '10px' }}>
-                     <div className="qty-selector-small" style={{ display: 'flex', alignItems: 'center', background: '#f1f5f9', borderRadius: '10px', padding: '4px' }}>
+                  <div className="card-action-bar">
+                     <div className="qty-selector-small" onClick={(e) => e.stopPropagation()}>
                         <button 
-                          style={{ border: 'none', background: 'white', width: '28px', height: '28px', borderRadius: '6px', cursor: 'pointer', fontWeight: 'bold' }}
-                          onClick={(e) => { e.stopPropagation(); setOrderForm({ cardId: card._id, quantity: Math.max(1, currentQty - 1) }) }}
+                          onClick={(e) => { e.stopPropagation(); setOrderForm({ cardId: card._id, quantity: Math.max(1, Math.min(card.pieceCount, currentQty - 1)) }) }}
                         >
-                          -
+                          <FaChevronLeft size={14} />
                         </button>
-                        <span style={{ padding: '0 12px', fontWeight: 'bold', fontSize: '0.9rem' }}>{currentQty}</span>
+                        <span>{currentQty}</span>
                         <button 
-                          style={{ border: 'none', background: 'white', width: '28px', height: '28px', borderRadius: '6px', cursor: 'pointer', fontWeight: 'bold' }}
-                          onClick={(e) => { e.stopPropagation(); setOrderForm({ cardId: card._id, quantity: currentQty + 1 }) }}
+                          onClick={(e) => { e.stopPropagation(); setOrderForm({ cardId: card._id, quantity: Math.min(card.pieceCount, currentQty + 1) }) }}
                         >
-                          +
+                          <FaChevronRight size={14} />
                         </button>
                      </div>
                      <button 
                        className="btn-direct-order"
-                       style={{ 
-                         flex: 1, 
-                         background: '#2563eb', 
-                         color: 'white', 
-                         border: 'none', 
-                         borderRadius: '10px', 
-                         fontWeight: '800', 
-                         fontSize: '0.85rem',
-                         cursor: 'pointer',
-                         transition: '0.3s'
-                       }}
                        onClick={(e) => {
                          e.stopPropagation();
-                         const finalQty = currentQty;
-                         setOrderingCard(card);
-                         // Trigger actual order logic
-                         const mockEvent = { preventDefault: () => {} };
-                         // We need to ensure handleOrderSubmit uses the right data
-                         // I'll update handleOrderSubmit to take parameters optionally
-                         handleDirectOrder(card, finalQty);
+                         handleDirectOrder(card, currentQty);
                        }}
-                       onMouseOver={(e) => e.target.style.background = '#1d4ed8'}
-                       onMouseOut={(e) => e.target.style.background = '#2563eb'}
                      >
-                       Confirm Order
+                       <FaShoppingCart size={16} />
+                       Add to Order
                      </button>
                   </div>
 
                   {isAdmin && (
-                    <div className="admin-actions" style={{ marginTop: '15px', borderTop: '1px solid #f1f5f9', paddingTop: '10px' }}>
+                    <div className="admin-actions">
                       <button onClick={(e) => { e.stopPropagation(); startEditing(card); }} className="btn-edit">Edit</button>
                       <button onClick={(e) => { e.stopPropagation(); handleDelete(card._id); }} className="btn-delete">Delete</button>
                     </div>
@@ -431,14 +440,14 @@ const Cards = () => {
                 type="number"
                 value={editingCard.pricePerPiece}
                 onChange={e => setEditingCard({...editingCard, pricePerPiece: e.target.value})}
-                placeholder="Price"
+                placeholder="Price per piece (₹)"
                 required
               />
               <input
                 type="number"
                 value={editingCard.pieceCount}
                 onChange={e => setEditingCard({...editingCard, pieceCount: e.target.value})}
-                placeholder="Piece Count"
+                placeholder="Stock available"
                 required
               />
               <input
@@ -555,7 +564,13 @@ const Cards = () => {
             
             <div className="popup-main-grid">
               <div className="popup-image-gallery">
-                <ImageSlider images={activePopupProduct.images} getImageUrl={getImageUrl} title={activePopupProduct.title} />
+                {popupImages.length > 0 ? (
+                  <ImageSlider images={popupImages} getImageUrl={getImageUrl} title={activePopupProduct.title} />
+                ) : (
+                  <div className="popup-placeholder-image">
+                    <div>No product image available</div>
+                  </div>
+                )}
               </div>
               
               <div className="popup-details">
@@ -576,14 +591,24 @@ const Cards = () => {
                       <span className="current">₹{activePopupProduct.pricePerPiece}</span>
                     </div>
                   )}
+                  <div className="popup-stock-line">Stock available: {activePopupProduct.pieceCount}</div>
+                  <div className="popup-total-line">Total for {cartQuantity} pcs: ₹{Math.floor(cartQuantity * activePopupProduct.pricePerPiece * (1 - (activePopupProduct.discountPercentage || 0) / 100))}</div>
+                </div>
+
+                {activePopupProduct.description && (
+                  <p className="popup-subtitle">{activePopupProduct.description}</p>
+                )}
+                <div className="popup-meta-row">
+                  <span>{activePopupProduct.createdAt ? `Posted on ${new Date(activePopupProduct.createdAt).toLocaleDateString()}` : 'Posted by Admin'}</span>
+                  {activePopupProduct.woodType && <span>{activePopupProduct.woodType}</span>}
                 </div>
 
                 <div className="quantity-control">
                   <span className="qty-label">Quantity:</span>
                   <div className="qty-btns">
-                    <button onClick={() => setCartQuantity(q => Math.max(1, q - 1))}>-</button>
+                    <button onClick={() => setCartQuantity(q => Math.max(1, Math.min(activePopupProduct.pieceCount, q - 1)))}>-</button>
                     <span>{cartQuantity}</span>
-                    <button onClick={() => setCartQuantity(q => q + 1)}>+</button>
+                    <button onClick={() => setCartQuantity(q => Math.min(activePopupProduct.pieceCount, q + 1))}>+</button>
                   </div>
                 </div>
 
@@ -639,7 +664,7 @@ const Cards = () => {
               <h3>You May Also Like</h3>
               <div className="recommendations-grid">
                 {cards.filter(c => c._id !== activePopupProduct._id).slice(0, 4).map(prod => (
-                  <div key={prod._id} className="rec-item" onClick={() => setActivePopupProduct(prod)}>
+                  <div key={prod._id} className="rec-item" onClick={() => navigate(`/products/${prod._id}`)}>
                     <img src={getImageUrl(prod.images[0])} alt={prod.title} />
                     <p>{prod.title}</p>
                     <span>₹{prod.pricePerPiece}</span>

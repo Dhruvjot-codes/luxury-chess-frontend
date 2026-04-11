@@ -94,7 +94,7 @@ main {
   min-height: 100vh;
   width: 100%;
   box-sizing: border-box;
-  padding-top: 120px; /* Header Height Clearance */
+  padding-top: 70px; /* Header Height Clearance */
   overflow-x: hidden; /* Prevent horizontal shifts */
   transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   position: relative;
@@ -130,7 +130,13 @@ main {
   .content-with-sidebar {
     margin-left: 0 !important;
     width: 100% !important;
-    padding-top: 120px !important;
+    padding-top: 70px !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .content-with-sidebar {
+    padding-top: 70px !important;
   }
 }
 

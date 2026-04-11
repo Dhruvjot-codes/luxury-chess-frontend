@@ -127,7 +127,7 @@ const Sidebar = ({ isOpen, onClose }) => {
 
   return (
     <>
-      <aside className={`app-sidebar ${isOpen ? 'open' : ''}`}>
+      <aside className={`app-sidebar ${isOpen ? 'open' : 'closed'}`}>
         <div className="sidebar-header">
           <div className="sidebar-brand">
             <span className="brand-main">THE LUXURY CHESS</span>
@@ -142,7 +142,11 @@ const Sidebar = ({ isOpen, onClose }) => {
                 key={item.path}
                 to={item.path}
                 className={`sidebar-link ${location.pathname === item.path ? 'active' : ''} ${item.highlight ? 'highlight' : ''} ${item.isAdmin ? 'admin-link' : ''} ${item.isAuth ? 'auth-link' : ''}`}
-                onClick={onClose}
+                onClick={() => {
+                  if (typeof window !== 'undefined' && window.innerWidth < 1024) {
+                    onClose();
+                  }
+                }}
               >
                 <span className="sidebar-icon">{item.icon}</span>
                 <span className="sidebar-label">{item.title}</span>

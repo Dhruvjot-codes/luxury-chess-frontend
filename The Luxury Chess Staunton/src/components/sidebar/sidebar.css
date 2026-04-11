@@ -1,9 +1,9 @@
 .app-sidebar {
   position: fixed;
-  top: 120px; /* Header height */
+  top: 70px; /* Header height */
   left: 0;
   width: 260px;
-  height: calc(100vh - 120px);
+  height: calc(100vh - 70px);
   background: var(--bg-color); /* Solid color */
   border-right: 1px solid var(--header-border);
   z-index: 999;
@@ -26,19 +26,29 @@
 /* Default hidden for small screens */
 @media (max-width: 1024px) {
   .app-sidebar {
-    left: -260px;
-    top: 0;
-    height: 100vh;
-    z-index: 2000;
+    left: 0;
+    top: 70px;
+    height: calc(100vh - 70px);
+    z-index: 1999;
+    transform: translateX(-260px);
   }
   .app-sidebar.open {
-    transform: translateX(260px);
+    transform: translateX(0);
+    z-index: 1999;
   }
 }
 
 /* Persistent on Desktop but can be hidden if user wants? 
    Let's stick to the toggle behavior for now to keep it clean, but adjust the main content padding. 
 */
+
+.app-sidebar.closed {
+  transform: translateX(-260px);
+}
+
+.app-sidebar.open {
+  transform: translateX(0);
+}
 
 .sidebar-header {
   padding: 24px 20px;
@@ -225,9 +235,13 @@
     transition: all 0.4s ease;
   }
   
-  /* If sidebar is togglable on desktop, we can use a class to shrink it */
+  /* On desktop, allow the sidebar to slide out when closed */
   .app-sidebar.closed {
-    transform: translateX(-100%);
+    transform: translateX(-260px);
+  }
+  
+  .app-sidebar.open {
+    transform: translateX(0);
   }
   
   .content-with-sidebar.full-width {

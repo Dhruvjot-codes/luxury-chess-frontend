@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { orderService, paymentService, getStoredUser } from "../../services/api";
 import RazorpayPayment from "../../components/payment/RazorpayPayment";
+import OrderProgressTracker from "../../components/OrderProgressTracker/OrderProgressTracker";
 import "./orders.css";
 
 const Orders = () => {
@@ -51,8 +52,9 @@ const Orders = () => {
 
   const handleAccept = async (id) => {
     try {
-      await orderService.acceptAdmin(id);
-      alert("Order accepted successfully!");
+      const response = await orderService.acceptAdmin(id);
+      const trackingNumber = response?.trackingNumber || 'N/A';
+      alert(`Order accepted successfully!\n\nTracking Number: ${trackingNumber}\n\nCustomer will receive payment link.`);
       fetchData();
     } catch (err) {
       alert(err.message || "Failed to accept order");
@@ -62,8 +64,8 @@ const Orders = () => {
   const handleReject = async (id) => {
     if(!window.confirm("Are you sure you want to reject this order?")) return;
     try {
-      await orderService.rejectAdmin(id);
-      alert("Order rejected.");
+      const response = await orderService.rejectAdmin(id);
+      alert("Order rejected successfully. Customer has been notified.");
       fetchData();
     } catch (err) {
       alert(err.message || "Failed to reject order");
@@ -78,6 +80,29 @@ const Orders = () => {
   const handlePaymentError = (error) => {
     setPaymentMessage(`Payment failed: ${error}`);
   };
+
+  const handleCancelOrder = (orderId) => {
+    const message = `Are you sure you want to cancel this order?\\n\\n⚠️ This action cannot be undone after confirmation.\\nPlease confirm to proceed.`;
+    
+    if (!window.confirm(message)) return;
+    
+    // Double confirmation for safety
+    if (!window.confirm("FINAL CONFIRMATION: Cancel this order?")) return;
+    
+    try {
+      // Call API to cancel order
+      orderService.cancelOrder(orderId).then(() => {
+        alert("Order cancelled successfully. You can contact support if you have any questions.");
+        fetchData();
+      }).catch(err => {
+        alert(err.message || "Failed to cancel order");
+      });
+    } catch (err) {
+      alert(err.message || "Failed to cancel order");
+    }
+  };
+
+  const whatsappNumber = import.meta.env.VITE_WHATSAPP_NUMBER || '+918146869295';
 
   if (!user) {
     return <div className="orders-page"><div className="orders-error">Please log in to view your orders.</div></div>;
@@ -127,18 +152,30 @@ const Orders = () => {
               <div key={order._id} className="order-card">
                 <div className="order-info">
                   <h3>{order.items?.[0]?.card?.title || 'Unknown Product'}</h3>
+                  <p><strong>Order ID:</strong> {order._id.slice(-8)}</p>
                   <p><strong>Quantity:</strong> {order.items?.[0]?.quantity || 1}</p>
                   <p><strong>Total Amount:</strong> ₹{order.totalAmount}</p>
                   <p><strong>Status:</strong> <span className={`status-badge status-${order.status}`}>{order.status}</span></p>
                   <p><strong>Created On:</strong> {new Date(order.createdAt).toLocaleDateString()}</p>
                 </div>
+
+                <OrderProgressTracker order={order} whatsappNumber={whatsappNumber} />
+
                 <div className="order-actions">
                   {(order.status === 'pending' || order.status === 'created') && (
-                    <RazorpayPayment 
-                      order={order} 
-                      onPaymentSuccess={handlePaymentSuccess}
-                      onPaymentError={handlePaymentError}
-                    />
+                    <>
+                      <RazorpayPayment 
+                        order={order} 
+                        onPaymentSuccess={handlePaymentSuccess}
+                        onPaymentError={handlePaymentError}
+                      />
+                      <button 
+                        className="btn-cancel"
+                        onClick={() => handleCancelOrder(order._id)}
+                      >
+                        ✕ Cancel Order
+                      </button>
+                    </>
                   )}
                   {order.status === 'paid' && (
                     <div className="payment-complete">
@@ -148,6 +185,16 @@ const Orders = () => {
                           Download Invoice
                         </a>
                       )}
+                    </div>
+                  )}
+                  {order.status === 'accepted' && (
+                    <div className="payment-pending">
+                      <p className="payment-alert">⚠️ Awaiting your payment. Please complete payment to proceed.</p>
+                      <RazorpayPayment 
+                        order={order} 
+                        onPaymentSuccess={handlePaymentSuccess}
+                        onPaymentError={handlePaymentError}
+                      />
                     </div>
                   )}
                 </div>

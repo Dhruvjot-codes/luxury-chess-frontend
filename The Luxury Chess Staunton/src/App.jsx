@@ -8,6 +8,7 @@ import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
 import Verify from "./pages/auth/Verify";
 import Cards from "./pages/cards/Cards";
+import ProductPage from "./pages/cards/ProductPage";
 import AdminDashboard from "./pages/auth/AdminDashboard";
 import Offers from "./pages/offers/Offers";
 import Orders from "./pages/orders/Orders";
@@ -57,6 +58,7 @@ const AppContent = () => {
           <Route path="/reset-password/:token" element={<ResetPassword />} />
           <Route path="/verify" element={<Verify />} />
           <Route path="/products" element={<Cards />} />
+          <Route path="/products/:id" element={<ProductPage />} />
           <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/offers" element={<Offers />} />
           <Route path="/orders" element={<Orders />} />

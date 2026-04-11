@@ -54,7 +54,7 @@ const Footer = () => {
         {/* Contact */}
         <div className="footer-section">
           <h3>Contact</h3>
-          <p>Email: luxurychessstaunton@gmail.com</p>
+          <p>Email: theluxurychessstaunton@gmail.com</p>
           <p>Phone: +91 81468 69295</p>
           <p className="whatsapp-contact">
             <strong>WhatsApp:</strong> +91 81468 69295

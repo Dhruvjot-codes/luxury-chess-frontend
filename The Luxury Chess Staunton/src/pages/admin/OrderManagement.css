@@ -1,5 +1,5 @@
 .order-management {
-  padding: 30px;
+  padding: 20px;
   max-width: 1400px;
   margin: 0 auto;
   animation: fadeIn 0.5s ease-out;
@@ -130,10 +130,185 @@
 }
 
 @media (max-width: 1024px) {
-  .management-table-container { border-radius: 0; border: none; }
+  .order-management {
+    padding: 16px;
+  }
+  
+  .order-management-header {
+    gap: 12px;
+  }
+  
+  .order-management-header h2 {
+    font-size: 1.5rem;
+  }
+  
+  .refresh-btn {
+    padding: 10px 16px;
+    font-size: 0.9rem;
+  }
+  
+  .stats-grid {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin-bottom: 30px;
+  }
+  
+  .stat-card {
+    padding: 20px;
+    border-radius: 16px;
+  }
+  
+  .stat-card h3 {
+    font-size: 0.8rem;
+  }
+  
+  .stat-card .value {
+    font-size: 2rem;
+  }
+  
+  .management-table th,
+  .management-table td {
+    padding: 16px;
+    font-size: 0.85rem;
+  }
+  
+  .management-table-container {
+    border-radius: 16px;
+  }
 }
 
 @media (max-width: 768px) {
-  .order-management { padding: 15px; }
-  .management-table th, .management-table td { padding: 15px; font-size: 0.8rem; }
+  .order-management {
+    padding: 12px;
+  }
+  
+  .order-management-header {
+    flex-direction: column;
+    gap: 12px;
+    align-items: stretch;
+    margin-bottom: 24px;
+  }
+  
+  .order-management-header h2 {
+    font-size: 1.3rem;
+    margin: 0;
+  }
+  
+  .refresh-btn {
+    width: 100%;
+    padding: 12px 16px;
+    font-size: 0.85rem;
+  }
+  
+  .stats-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+  
+  .stat-card {
+    padding: 16px;
+  }
+  
+  .stat-card h3 {
+    font-size: 0.75rem;
+  }
+  
+  .stat-card .value {
+    font-size: 1.8rem;
+  }
+  
+  .management-table {
+    font-size: 0.8rem;
+  }
+  
+  .management-table th,
+  .management-table td {
+    padding: 12px 8px;
+  }
+  
+  .status-badge {
+    padding: 6px 10px;
+    font-size: 0.65rem;
+  }
+  
+  .action-btns {
+    flex-direction: column;
+    gap: 6px;
+  }
+  
+  .action-btn {
+    padding: 8px 12px;
+    font-size: 0.75rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .order-management {
+    padding: 10px;
+  }
+  
+  .order-management-header {
+    margin-bottom: 16px;
+  }
+  
+  .order-management-header h2 {
+    font-size: 1.1rem;
+  }
+  
+  .refresh-btn {
+    padding: 10px 12px;
+    font-size: 0.8rem;
+  }
+  
+  .stats-grid {
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+  
+  .stat-card {
+    padding: 12px;
+    border-radius: 12px;
+  }
+  
+  .stat-card h3 {
+    font-size: 0.7rem;
+    margin-bottom: 6px;
+  }
+  
+  .stat-card .value {
+    font-size: 1.5rem;
+  }
+  
+  .management-table {
+    font-size: 0.75rem;
+  }
+  
+  .management-table th {
+    padding: 10px 6px;
+  }
+  
+  .management-table td {
+    padding: 10px 6px;
+  }
+  
+  .status-badge {
+    padding: 4px 8px;
+    font-size: 0.6rem;
+  }
+  
+  .action-btns {
+    flex-direction: column;
+  }
+  
+  .action-btn {
+    padding: 6px 10px;
+    font-size: 0.7rem;
+    width: 100%;
+  }
+  
+  .management-table-container {
+    overflow-x: auto;
+    border-radius: 10px;
+  }
 }

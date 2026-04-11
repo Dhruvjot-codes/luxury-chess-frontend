@@ -1,0 +1,265 @@
+.order-progress-tracker {
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  border-radius: 20px;
+  padding: 24px;
+  margin: 20px 0;
+  border: 1px solid rgba(37, 99, 235, 0.1);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+}
+
+.tracker-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  gap: 15px;
+}
+
+.tracker-header h3 {
+  margin: 0;
+  color: #0f172a;
+  font-size: 1.3rem;
+  font-weight: 800;
+}
+
+.whatsapp-contact-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg, #25d366 0%, #1fa952 100%);
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 5px 15px rgba(37, 211, 102, 0.3);
+}
+
+.whatsapp-contact-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(37, 211, 102, 0.4);
+}
+
+.whatsapp-contact-btn:active {
+  transform: translateY(0);
+}
+
+/* Progress Bar */
+.progress-bar {
+  width: 100%;
+  height: 6px;
+  background: #e2e8f0;
+  border-radius: 999px;
+  margin-bottom: 36px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #2563eb 0%, #1d4ed8 100%);
+  transition: width 0.6s ease;
+  border-radius: 999px;
+}
+
+/* Stages Container */
+.stages-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.stage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 12px;
+  border-radius: 16px;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.stage.inactive {
+  opacity: 0.4;
+  color: #94a3b8;
+}
+
+.stage.active {
+  opacity: 1;
+  color: #2563eb;
+  background: rgba(37, 99, 235, 0.05);
+}
+
+.stage.current {
+  background: rgba(37, 99, 235, 0.1);
+  border: 2px solid #2563eb;
+}
+
+.stage-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: white;
+  color: inherit;
+  font-size: 1.3rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+}
+
+.stage.active .stage-icon {
+  background: rgba(37, 99, 235, 0.1);
+}
+
+.stage.current .stage-icon {
+  background: #2563eb;
+  color: white;
+  box-shadow: 0 6px 20px rgba(37, 99, 235, 0.3);
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.08);
+  }
+}
+
+.stage-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-align: center;
+  line-height: 1.3;
+}
+
+.stage-current {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background: #ef4444;
+  color: white;
+  padding: 2px 6px;
+  border-radius: 10px;
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Stage Details */
+.stage-details {
+  background: white;
+  border-radius: 16px;
+  padding: 16px;
+  border: 1px solid rgba(37, 99, 235, 0.08);
+}
+
+.stage-details p {
+  margin: 8px 0;
+  color: #475569;
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+.stage-details p:first-child {
+  margin-top: 0;
+}
+
+.stage-details p strong {
+  color: #0f172a;
+  font-weight: 700;
+}
+
+.payment-info {
+  background: #fef3c7;
+  color: #92400e;
+  padding: 12px;
+  border-radius: 10px;
+  border-left: 4px solid #f59e0b;
+}
+
+.shipped-info {
+  background: #dbeafe;
+  color: #1e40af;
+  padding: 12px;
+  border-radius: 10px;
+  border-left: 4px solid #3b82f6;
+}
+
+.delivered-info {
+  background: #dcfce7;
+  color: #15803d;
+  padding: 12px;
+  border-radius: 10px;
+  border-left: 4px solid #22c55e;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .order-progress-tracker {
+    padding: 16px;
+  }
+
+  .tracker-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .whatsapp-contact-btn {
+    width: 100%;
+    justify-content: center;
+    padding: 12px;
+  }
+
+  .stages-container {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+  }
+
+  .stage-icon {
+    width: 40px;
+    height: 40px;
+    font-size: 1.1rem;
+  }
+
+  .stage-label {
+    font-size: 0.7rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .stages-container {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+
+  .stage {
+    padding: 8px;
+  }
+
+  .stage-icon {
+    width: 36px;
+    height: 36px;
+    font-size: 1rem;
+  }
+
+  .stage-label {
+    font-size: 0.65rem;
+  }
+
+  .stage-details {
+    padding: 12px;
+  }
+
+  .stage-details p {
+    font-size: 0.8rem;
+  }
+}
